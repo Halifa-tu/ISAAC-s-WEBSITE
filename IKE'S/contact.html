@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Contact — LandMark Realty</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="assets/css/style.css"/>
+</head>
+<body>
+
+<nav class="site-nav" id="site-nav"></nav>
+
+<div class="page-header">
+  <div class="container">
+    <span class="eyebrow">Reach Out</span>
+    <h1 class="display-serif" style="font-size:clamp(2rem,4vw,3.2rem);">Contact Us</h1>
+    <div class="section-divider"></div>
+    <p style="color:var(--stone);max-width:500px;font-size:0.93rem;line-height:1.8;">We're here to help. Reach us by phone, WhatsApp, email, or use the form below and we'll get back to you promptly.</p>
+  </div>
+</div>
+
+<div class="container py-5">
+  <div class="row g-5">
+
+    <!-- Left: Contact Info -->
+    <div class="col-lg-5">
+      <h3 style="font-family:'Cormorant Garamond',serif;color:var(--cream);font-size:1.9rem;margin-bottom:28px;">Reach Our Agent Directly</h3>
+      <div class="d-flex flex-column gap-4 mb-5">
+        <div class="d-flex align-items-center gap-4">
+          <div class="icon-circle sm"><i class="bi bi-telephone-fill"></i></div>
+          <div>
+            <div style="color:var(--stone);font-size:0.73rem;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px;">Phone</div>
+            <a id="c-phone" href="#" style="color:var(--cream);font-size:1.05rem;text-decoration:none;font-weight:500;"></a>
+          </div>
+        </div>
+        <div class="d-flex align-items-center gap-4">
+          <div class="icon-circle sm" style="background:rgba(37,211,102,0.12);color:#25D366;"><i class="bi bi-whatsapp"></i></div>
+          <div>
+            <div style="color:var(--stone);font-size:0.73rem;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px;">WhatsApp</div>
+            <a id="c-wa" href="#" target="_blank" style="color:var(--cream);font-size:1.05rem;text-decoration:none;font-weight:500;">Chat with us</a>
+          </div>
+        </div>
+        <div class="d-flex align-items-center gap-4">
+          <div class="icon-circle sm"><i class="bi bi-envelope-fill"></i></div>
+          <div>
+            <div style="color:var(--stone);font-size:0.73rem;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px;">Email</div>
+            <a id="c-email" href="#" style="color:var(--cream);font-size:1.05rem;text-decoration:none;font-weight:500;"></a>
+          </div>
+        </div>
+        <div class="d-flex align-items-center gap-4">
+          <div class="icon-circle sm"><i class="bi bi-clock"></i></div>
+          <div>
+            <div style="color:var(--stone);font-size:0.73rem;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px;">Response Time</div>
+            <div style="color:var(--cream);font-size:1.05rem;font-weight:500;">Within 2–4 hours</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="d-flex gap-3 flex-wrap">
+        <a id="c-call-btn" href="#" class="btn-gold"><i class="bi bi-telephone me-2"></i>Call Now</a>
+        <a id="c-wa-btn"   href="#" target="_blank" class="btn-wa"><i class="bi bi-whatsapp me-2"></i>WhatsApp</a>
+        <a id="c-sms-btn"  href="#" class="btn-outline-gold"><i class="bi bi-chat-text me-2"></i>SMS</a>
+      </div>
+    </div>
+
+    <!-- Right: Message Form -->
+    <div class="col-lg-7">
+      <div style="background:var(--ink-800);border:1px solid rgba(201,168,76,0.15);border-radius:20px;padding:38px;">
+        <h4 style="font-family:'Cormorant Garamond',serif;color:var(--cream);font-size:1.5rem;margin-bottom:24px;">Send a Message</h4>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">Full Name *</label>
+            <input type="text" class="form-field" id="m-name" placeholder="Your name"/>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Phone Number *</label>
+            <input type="tel" class="form-field" id="m-phone" placeholder="+233…"/>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Email Address</label>
+            <input type="email" class="form-field" id="m-email" placeholder="your@email.com"/>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Subject</label>
+            <input type="text" class="form-field" id="m-subject" placeholder="What is this about?"/>
+          </div>
+          <div class="col-12">
+            <label class="form-label">Message *</label>
+            <textarea class="form-field" id="m-body" rows="5" placeholder="Write your message here…"></textarea>
+          </div>
+          <div class="col-12">
+            <button class="btn-gold w-100 py-3" onclick="sendMessage()"><i class="bi bi-send me-2"></i>Send Message</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- FAQ -->
+  <div class="mt-5 pt-4">
+    <div class="text-center mb-4">
+      <span class="eyebrow">Common Questions</span>
+      <h3 class="display-serif" style="font-size:clamp(1.6rem,3vw,2.4rem);">FAQ</h3>
+      <div class="section-divider center"></div>
+    </div>
+    <div class="accordion" id="faq" style="max-width:760px;margin:0 auto;">
+      <div class="accordion-item" style="background:var(--ink-800);border:1px solid rgba(255,255,255,0.07);border-radius:12px !important;margin-bottom:10px;">
+        <h2 class="accordion-header">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq1" style="background:var(--ink-800);color:var(--cream);border-radius:12px !important;font-family:'DM Sans',sans-serif;font-size:0.92rem;">Do you charge a fee for property requests?</button>
+        </h2>
+        <div id="faq1" class="accordion-collapse collapse" data-bs-parent="#faq">
+          <div class="accordion-body" style="color:var(--stone-light);font-size:0.88rem;line-height:1.8;">No, submitting a property request is completely free. You only pay the standard agency commission if and when a deal is completed.</div>
+        </div>
+      </div>
+      <div class="accordion-item" style="background:var(--ink-800);border:1px solid rgba(255,255,255,0.07);border-radius:12px !important;margin-bottom:10px;">
+        <h2 class="accordion-header">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2" style="background:var(--ink-800);color:var(--cream);border-radius:12px !important;font-family:'DM Sans',sans-serif;font-size:0.92rem;">How fast do you respond?</button>
+        </h2>
+        <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faq">
+          <div class="accordion-body" style="color:var(--stone-light);font-size:0.88rem;line-height:1.8;">We typically respond within 2–4 hours during business hours. For property requests, expect a full response with options within 24 hours.</div>
+        </div>
+      </div>
+      <div class="accordion-item" style="background:var(--ink-800);border:1px solid rgba(255,255,255,0.07);border-radius:12px !important;margin-bottom:10px;">
+        <h2 class="accordion-header">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3" style="background:var(--ink-800);color:var(--cream);border-radius:12px !important;font-family:'DM Sans',sans-serif;font-size:0.92rem;">Are the documents verified on all listings?</button>
+        </h2>
+        <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faq">
+          <div class="accordion-body" style="color:var(--stone-light);font-size:0.88rem;line-height:1.8;">Yes. We personally verify title deeds, indentures, and land search reports before any property is published on our site.</div>
+        </div>
+      </div>
+      <div class="accordion-item" style="background:var(--ink-800);border:1px solid rgba(255,255,255,0.07);border-radius:12px !important;">
+        <h2 class="accordion-header">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq4" style="background:var(--ink-800);color:var(--cream);border-radius:12px !important;font-family:'DM Sans',sans-serif;font-size:0.92rem;">Can I request a property outside Accra?</button>
+        </h2>
+        <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faq">
+          <div class="accordion-body" style="color:var(--stone-light);font-size:0.88rem;line-height:1.8;">Absolutely. We source properties across Ghana including Accra, Tema, Kasoa, Kumasi, Takoradi, and other regions. Just specify your preferred location in your request.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer" id="site-footer"></footer>
+<div id="toast-container"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="assets/js/data.js"></script>
+<script src="assets/js/main.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    renderNavbar('contact.html');
+    renderFooter();
+    const a = LM.getAgent();
+    document.getElementById('c-phone').href        = `tel:${a.phone}`;
+    document.getElementById('c-phone').textContent = a.phone;
+    document.getElementById('c-wa').href           = `https://wa.me/${a.wa}`;
+    document.getElementById('c-email').href        = `mailto:${a.email}`;
+    document.getElementById('c-email').textContent = a.email;
+    document.getElementById('c-call-btn').href     = `tel:${a.phone}`;
+    document.getElementById('c-wa-btn').href       = `https://wa.me/${a.wa}`;
+    document.getElementById('c-sms-btn').href      = `sms:${a.phone}`;
+  });
+
+  function sendMessage() {
+    const name = document.getElementById('m-name').value.trim();
+    const body = document.getElementById('m-body').value.trim();
+    if (!name) return toast('⚠️ Please enter your name.');
+    if (!body) return toast('⚠️ Please write a message.');
+    LM.addMessage({
+      name,
+      phone:   document.getElementById('m-phone').value,
+      email:   document.getElementById('m-email').value,
+      subject: document.getElementById('m-subject').value,
+      body,
+    });
+    toast('✅ Message sent! We\'ll get back to you soon.');
+    ['m-name','m-phone','m-email','m-subject','m-body'].forEach(id => document.getElementById(id).value = '');
+  }
+</script>
+</body>
+</html>
