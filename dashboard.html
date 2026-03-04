@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard — LandMark Admin</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root { --gold:#C9A84C; --gold-light:#E2C97E; --ink:#0E1117; --ink-800:#161B26; --ink-700:#1E2535; --ink-600:#252D40; --stone:#8A8F9C; --stone-light:#BEC3CE; --cream:#F8F5EF; --danger:#E05252; --success:#25D366; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--ink); color: var(--cream); min-height: 100vh; display: flex; }
+
+    /* ── Sidebar ── */
+    .sidebar { width: 240px; min-height: 100vh; background: var(--ink-800); border-right: 1px solid rgba(201,168,76,0.1); display: flex; flex-direction: column; flex-shrink: 0; transition: width 0.3s; position: fixed; top: 0; left: 0; z-index: 100; }
+    .sidebar.collapsed { width: 60px; }
+    .sidebar.collapsed .sidebar-label { display: none; }
+    .sidebar.collapsed .brand-text { display: none; }
+    .sidebar.collapsed .sidebar-link { justify-content: center; padding: 12px; }
+
+    .sidebar-header { padding: 22px 20px; border-bottom: 1px solid rgba(201,168,76,0.1); display: flex; align-items: center; gap: 10px; }
+    .brand-text { font-family: 'Cormorant Garamond', serif; color: var(--gold); font-size: 1.1rem; font-weight: 700; white-space: nowrap; overflow: hidden; }
+
+    .sidebar-nav { flex: 1; padding: 12px 0; overflow: hidden; }
+    .sidebar-link { display: flex; align-items: center; gap: 12px; padding: 11px 20px; color: var(--stone-light); cursor: pointer; transition: all 0.2s; font-size: 0.88rem; font-weight: 500; border-left: 3px solid transparent; white-space: nowrap; text-decoration: none; }
+    .sidebar-link:hover { color: var(--gold); background: rgba(201,168,76,0.06); }
+    .sidebar-link.active { color: var(--gold); background: rgba(201,168,76,0.08); border-left-color: var(--gold); }
+    .sidebar-link i { font-size: 1.05rem; flex-shrink: 0; }
+    .sidebar-label { overflow: hidden; }
+    .sidebar-badge { background: var(--danger); color: #fff; border-radius: 100px; padding: 1px 7px; font-size: 0.68rem; font-weight: 700; margin-left: auto; }
+
+    .sidebar-footer { padding: 14px 0; border-top: 1px solid rgba(201,168,76,0.1); }
+    .sidebar-section { padding: 6px 20px 4px; color: var(--stone); font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 600; }
+
+    /* ── Main Content ── */
+    .main-wrap { flex: 1; margin-left: 240px; min-height: 100vh; display: flex; flex-direction: column; transition: margin-left 0.3s; }
+    .main-wrap.expanded { margin-left: 60px; }
+
+    /* ── Top Bar ── */
+    .topbar { background: var(--ink-800); border-bottom: 1px solid rgba(201,168,76,0.1); padding: 14px 28px; display: flex; align-items: center; gap: 14px; position: sticky; top: 0; z-index: 50; }
+    .topbar-title { color: var(--cream); font-weight: 600; font-size: 0.95rem; }
+    .topbar-user { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+    .user-dot { width: 34px; height: 34px; border-radius: 50%; background: rgba(201,168,76,0.15); border: 1px solid var(--gold); display: flex; align-items: center; justify-content: center; color: var(--gold); font-size: 0.85rem; font-weight: 700; }
+
+    /* ── Content Area ── */
+    .content-area { flex: 1; padding: 28px; }
+
+    /* ── Panels ── */
+    .panel { display: none; }
+    .panel.active { display: block; }
+
+    /* ── Stat cards ── */
+    .dash-stat { background: var(--ink-800); border: 1px solid rgba(201,168,76,0.12); border-radius: 14px; padding: 22px 24px; transition: all 0.2s; }
+    .dash-stat:hover { border-color: rgba(201,168,76,0.3); transform: translateY(-2px); }
+    .dash-stat-num { font-family: 'Cormorant Garamond', serif; font-size: 2.2rem; font-weight: 700; color: var(--gold); line-height: 1; margin-bottom: 6px; }
+    .dash-stat-label { color: var(--stone); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; }
+
+    /* ── Tables / Lists ── */
+    .data-row { background: var(--ink-700); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 16px 18px; margin-bottom: 10px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+    .data-row:hover { border-color: rgba(201,168,76,0.2); }
+    .data-thumb { width: 60px; height: 60px; border-radius: 10px; overflow: hidden; background: var(--ink-600); flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; }
+    .data-thumb img { width: 100%; height: 100%; object-fit: cover; }
+
+    /* ── Form fields ── */
+    .f-label { color: var(--stone-light); font-size: 0.78rem; letter-spacing: 0.04em; display: block; margin-bottom: 6px; font-weight: 500; }
+    .f-input { width: 100%; background: var(--ink-700); border: 1px solid rgba(255,255,255,0.1); color: var(--cream); border-radius: 10px; padding: 11px 14px; font-family: 'DM Sans', sans-serif; font-size: 0.88rem; outline: none; transition: border-color 0.2s; }
+    .f-input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,168,76,0.12); }
+    .f-input::placeholder { color: var(--stone); }
+    .f-input option { background: var(--ink-700); }
+    textarea.f-input { resize: vertical; }
+
+    /* ── Buttons ── */
+    .btn-g { background: var(--gold); color: var(--ink); border: none; border-radius: 100px; padding: 10px 22px; font-weight: 600; font-size: 0.88rem; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px; }
+    .btn-g:hover { background: var(--gold-light); }
+    .btn-o { background: transparent; color: var(--gold); border: 2px solid var(--gold); border-radius: 100px; padding: 8px 20px; font-weight: 600; font-size: 0.88rem; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.2s; }
+    .btn-o:hover { background: var(--gold); color: var(--ink); }
+    .btn-danger { background: rgba(224,82,82,0.1); color: var(--danger); border: 1px solid rgba(224,82,82,0.25); border-radius: 8px; padding: 7px 14px; font-size: 0.82rem; cursor: pointer; font-family: 'DM Sans', sans-serif; }
+    .btn-sm { padding: 7px 14px; font-size: 0.8rem; border-radius: 8px; }
+    .btn-dark { background: var(--ink-600); color: var(--stone-light); border: 1px solid rgba(201,168,76,0.15); border-radius: 8px; padding: 7px 14px; font-size: 0.8rem; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.2s; }
+    .btn-dark:hover { color: var(--gold); border-color: var(--gold); }
+    .btn-wa { background: #25D366; color: #fff; border: none; border-radius: 8px; padding: 7px 14px; font-size: 0.8rem; cursor: pointer; font-family: 'DM Sans', sans-serif; text-decoration: none; display: inline-block; }
+
+    /* ── Image Upload Zone ── */
+    .upload-zone { border: 2px dashed rgba(201,168,76,0.3); border-radius: 14px; padding: 28px; text-align: center; cursor: pointer; background: rgba(201,168,76,0.02); transition: all 0.2s; }
+    .upload-zone:hover { border-color: var(--gold); background: rgba(201,168,76,0.05); }
+
+    /* ── Type chips (form) ── */
+    .type-chip { padding: 8px 18px; border-radius: 100px; border: 2px solid rgba(255,255,255,0.1); color: var(--stone-light); cursor: pointer; font-size: 0.82rem; font-weight: 500; transition: all 0.2s; background: transparent; font-family: 'DM Sans', sans-serif; }
+    .type-chip.active { border-color: var(--gold); color: var(--gold); background: rgba(201,168,76,0.1); }
+
+    /* ── Toast ── */
+    #toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 9999; display: flex; flex-direction: column; gap: 8px; }
+    .toast-item { background: var(--gold); color: var(--ink); padding: 11px 22px; border-radius: 100px; font-weight: 700; font-size: 0.85rem; animation: toastIn 0.3s ease both; }
+    @keyframes toastIn { from { opacity:0; transform: translateY(12px); } to { opacity:1; transform: none; } }
+
+    /* ── Request / Message cards ── */
+    .inbox-card { background: var(--ink-800); border: 1px solid rgba(255,255,255,0.06); border-radius: 14px; padding: 20px; margin-bottom: 12px; }
+    .inbox-card:hover { border-color: rgba(201,168,76,0.2); }
+    .inbox-meta { color: var(--stone); font-size: 0.75rem; }
+
+    @media (max-width: 768px) {
+      .sidebar { width: 0; overflow: hidden; }
+      .sidebar.mobile-open { width: 240px; }
+      .main-wrap { margin-left: 0 !important; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══ SIDEBAR ══════════════════════════════════ -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <i class="bi bi-buildings" style="color:var(--gold);font-size:1.2rem;flex-shrink:0;"></i>
+    <span class="brand-text">LandMark Admin</span>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="sidebar-section">Main</div>
+    <a class="sidebar-link active" onclick="showPanel('overview')" id="sl-overview">
+      <i class="bi bi-grid-1x2"></i><span class="sidebar-label">Overview</span>
+    </a>
+    <a class="sidebar-link" onclick="showPanel('listings')" id="sl-listings">
+      <i class="bi bi-list-ul"></i><span class="sidebar-label">Listings</span>
+    </a>
+    <a class="sidebar-link" onclick="showPanel('add')" id="sl-add">
+      <i class="bi bi-plus-circle"></i><span class="sidebar-label">Add Listing</span>
+    </a>
+
+    <div class="sidebar-section" style="margin-top:8px;">Inbox</div>
+    <a class="sidebar-link" onclick="showPanel('requests')" id="sl-requests">
+      <i class="bi bi-inbox"></i><span class="sidebar-label">Property Requests</span>
+      <span class="sidebar-badge" id="badge-requests" style="display:none;">0</span>
+    </a>
+    <a class="sidebar-link" onclick="showPanel('messages')" id="sl-messages">
+      <i class="bi bi-chat-dots"></i><span class="sidebar-label">Messages</span>
+      <span class="sidebar-badge" id="badge-messages" style="display:none;">0</span>
+    </a>
+
+    <div class="sidebar-section" style="margin-top:8px;">System</div>
+    <a class="sidebar-link" onclick="showPanel('settings')" id="sl-settings">
+      <i class="bi bi-gear"></i><span class="sidebar-label">Agent Settings</span>
+    </a>
+    <a class="sidebar-link" href="../index.html" target="_blank">
+      <i class="bi bi-box-arrow-up-right"></i><span class="sidebar-label">View Website</span>
+    </a>
+  </nav>
+
+  <div class="sidebar-footer">
+    <a class="sidebar-link" onclick="doLogout()" style="color:var(--danger) !important;">
+      <i class="bi bi-box-arrow-left"></i><span class="sidebar-label">Logout</span>
+    </a>
+  </div>
+</aside>
+
+<!-- ══ MAIN ══════════════════════════════════════ -->
+<div class="main-wrap" id="main-wrap">
+
+  <!-- Top Bar -->
+  <div class="topbar">
+    <button onclick="toggleSidebar()" style="background:none;border:none;color:var(--gold);font-size:1.25rem;cursor:pointer;padding:0;"><i class="bi bi-layout-sidebar"></i></button>
+    <span class="topbar-title" id="topbar-title">Overview</span>
+    <div class="topbar-user">
+      <span style="color:var(--stone);font-size:0.8rem;" class="d-none d-md-inline">Admin</span>
+      <div class="user-dot">A</div>
+      <button onclick="doLogout()" style="background:none;border:1px solid rgba(224,82,82,0.3);color:var(--danger);border-radius:8px;padding:5px 12px;font-size:0.78rem;cursor:pointer;">Logout</button>
+    </div>
+  </div>
+
+  <div class="content-area">
+
+    <!-- ── OVERVIEW ─────────────────────────── -->
+    <div class="panel active" id="panel-overview">
+      <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.8rem;margin-bottom:24px;">Dashboard Overview</h2>
+
+      <div class="row g-3 mb-5">
+        <div class="col-6 col-lg-3"><div class="dash-stat"><div class="dash-stat-num" id="ov-total">0</div><div class="dash-stat-label">Total Listings</div></div></div>
+        <div class="col-6 col-lg-3"><div class="dash-stat"><div class="dash-stat-num" id="ov-active">0</div><div class="dash-stat-label">Active</div></div></div>
+        <div class="col-6 col-lg-3"><div class="dash-stat"><div class="dash-stat-num" id="ov-requests">0</div><div class="dash-stat-label">Property Requests</div></div></div>
+        <div class="col-6 col-lg-3"><div class="dash-stat"><div class="dash-stat-num" id="ov-messages">0</div><div class="dash-stat-label">Messages</div></div></div>
+      </div>
+
+      <div class="row g-4">
+        <div class="col-md-6">
+          <div style="background:var(--ink-800);border:1px solid rgba(255,255,255,0.06);border-radius:16px;padding:24px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">
+              <h6 style="color:var(--cream);font-size:0.95rem;margin:0;">Recent Requests</h6>
+              <button class="btn-dark btn-sm" onclick="showPanel('requests')">View All</button>
+            </div>
+            <div id="ov-recent-requests"></div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div style="background:var(--ink-800);border:1px solid rgba(255,255,255,0.06);border-radius:16px;padding:24px;">
+            <h6 style="color:var(--cream);font-size:0.95rem;margin-bottom:18px;">Quick Actions</h6>
+            <div class="d-flex flex-column gap-2">
+              <button class="btn-g w-100 justify-content-center" onclick="showPanel('add')"><i class="bi bi-plus"></i>Add New Listing</button>
+              <button class="btn-o w-100" onclick="showPanel('requests')"><i class="bi bi-inbox me-2"></i>View Requests</button>
+              <a href="../index.html" target="_blank" class="btn-dark w-100 text-center" style="display:block;text-decoration:none;padding:10px;">
+                <i class="bi bi-eye me-2"></i>Preview Website
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── LISTINGS ──────────────────────────── -->
+    <div class="panel" id="panel-listings">
+      <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+        <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.8rem;margin:0;">All Listings</h2>
+        <button class="btn-g" onclick="showPanel('add')"><i class="bi bi-plus"></i>Add New</button>
+      </div>
+      <div id="listings-list"></div>
+    </div>
+
+    <!-- ── ADD / EDIT LISTING ────────────────── -->
+    <div class="panel" id="panel-add">
+      <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.8rem;margin-bottom:28px;" id="add-title">Add New Listing</h2>
+      <div style="background:var(--ink-800);border-radius:18px;padding:32px;max-width:900px;">
+        <input type="hidden" id="e-id"/>
+        <div class="row g-4">
+
+          <!-- Type -->
+          <div class="col-12">
+            <label class="f-label">Property Type *</label>
+            <div class="d-flex gap-2 flex-wrap">
+              <button class="type-chip active" id="tc-house" onclick="setType(this,'house')">🏠 House</button>
+              <button class="type-chip"        id="tc-room"  onclick="setType(this,'room')">🛏 Room</button>
+              <button class="type-chip"        id="tc-land"  onclick="setType(this,'land')">🌿 Land</button>
+            </div>
+            <input type="hidden" id="e-type" value="house"/>
+          </div>
+
+          <!-- Title & Price -->
+          <div class="col-md-8">
+            <label class="f-label">Title *</label>
+            <input type="text" class="f-input" id="e-title" placeholder="e.g. Elegant 4-Bedroom House in East Legon"/>
+          </div>
+          <div class="col-md-4">
+            <label class="f-label">Price *</label>
+            <input type="text" class="f-input" id="e-price" placeholder="e.g. GHS 500,000"/>
+          </div>
+
+          <!-- Location & Size -->
+          <div class="col-md-6">
+            <label class="f-label">Location</label>
+            <input type="text" class="f-input" id="e-location" placeholder="e.g. East Legon, Accra"/>
+          </div>
+          <div class="col-md-6">
+            <label class="f-label">Size / Area</label>
+            <input type="text" class="f-input" id="e-size" placeholder="e.g. 200 sqm or 1 acre"/>
+          </div>
+
+          <!-- Beds & Baths -->
+          <div class="col-md-3" id="wrap-beds">
+            <label class="f-label">Bedrooms</label>
+            <input type="number" class="f-input" id="e-beds" placeholder="e.g. 3" min="0"/>
+          </div>
+          <div class="col-md-3" id="wrap-baths">
+            <label class="f-label">Bathrooms</label>
+            <input type="number" class="f-input" id="e-baths" placeholder="e.g. 2" min="0"/>
+          </div>
+          <div class="col-md-3">
+            <label class="f-label">Status</label>
+            <select class="f-input" id="e-status">
+              <option value="available">Available</option>
+              <option value="let">Let / Sold</option>
+            </select>
+          </div>
+          <div class="col-md-3 d-flex align-items-end pb-1">
+            <label style="color:var(--stone-light);font-size:0.85rem;cursor:pointer;display:flex;align-items:center;gap:8px;">
+              <input type="checkbox" id="e-featured" style="width:17px;height:17px;accent-color:var(--gold);"/> Mark as Featured
+            </label>
+          </div>
+
+          <!-- Description -->
+          <div class="col-12">
+            <label class="f-label">Description</label>
+            <textarea class="f-input" id="e-desc" rows="4" placeholder="Describe the property in detail — features, amenities, access, nearby landmarks…"></textarea>
+          </div>
+
+          <!-- Image Upload -->
+          <div class="col-12">
+            <label class="f-label">Property Photos</label>
+            <div class="upload-zone" onclick="document.getElementById('img-file').click()">
+              <div style="font-size:2.2rem;margin-bottom:8px;">📸</div>
+              <div style="color:var(--gold);font-weight:600;margin-bottom:4px;font-size:0.9rem;">Click to upload photos</div>
+              <div style="color:var(--stone);font-size:0.78rem;">JPG, PNG, WEBP supported · Multiple files allowed</div>
+            </div>
+            <input type="file" id="img-file" accept="image/*" multiple style="display:none;" onchange="handleUpload(event)"/>
+            <div id="img-previews" class="d-flex gap-2 flex-wrap mt-3"></div>
+          </div>
+
+          <!-- Actions -->
+          <div class="col-12 d-flex gap-3 flex-wrap pt-2">
+            <button class="btn-g" style="padding:12px 32px;" onclick="saveListing()"><i class="bi bi-check2"></i><span id="save-btn-text">Publish Listing</span></button>
+            <button class="btn-o" onclick="clearForm()">Clear</button>
+            <button class="btn-dark" onclick="showPanel('listings')">Cancel</button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ── PROPERTY REQUESTS ─────────────────── -->
+    <div class="panel" id="panel-requests">
+      <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.8rem;margin:0;">Property Requests</h2>
+        <span id="req-count" style="color:var(--stone);font-size:0.85rem;"></span>
+      </div>
+      <div id="requests-list"></div>
+    </div>
+
+    <!-- ── MESSAGES ──────────────────────────── -->
+    <div class="panel" id="panel-messages">
+      <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.8rem;margin-bottom:24px;">Messages</h2>
+      <div id="messages-list"></div>
+    </div>
+
+    <!-- ── SETTINGS ──────────────────────────── -->
+    <div class="panel" id="panel-settings">
+      <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.8rem;margin-bottom:28px;">Agent Settings</h2>
+      <div style="background:var(--ink-800);border-radius:18px;padding:32px;max-width:580px;">
+        <div class="row g-4">
+          <div class="col-12">
+            <label class="f-label">Agent Full Name</label>
+            <input type="text" class="f-input" id="s-name" placeholder="Full name"/>
+          </div>
+          <div class="col-md-6">
+            <label class="f-label">Phone Number</label>
+            <input type="tel" class="f-input" id="s-phone" placeholder="+233…"/>
+          </div>
+          <div class="col-md-6">
+            <label class="f-label">WhatsApp Number <small style="color:var(--stone);">(no +, e.g. 233244…)</small></label>
+            <input type="text" class="f-input" id="s-wa" placeholder="233244000000"/>
+          </div>
+          <div class="col-12">
+            <label class="f-label">Email Address</label>
+            <input type="email" class="f-input" id="s-email" placeholder="you@email.com"/>
+          </div>
+          <div class="col-12">
+            <label class="f-label">Agent Bio <small style="color:var(--stone);">(shown on About &amp; Footer)</small></label>
+            <textarea class="f-input" id="s-bio" rows="4" placeholder="Brief professional biography…"></textarea>
+          </div>
+          <div class="col-12">
+            <button class="btn-g" style="padding:12px 32px;" onclick="saveSettings()"><i class="bi bi-check2"></i>Save Settings</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content-area -->
+</div><!-- /main-wrap -->
+
+<div id="toast-container"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../assets/js/data.js"></script>
+<script>
+  // ── Auth guard ──────────────────────────────
+  if (!LM.isLoggedIn()) window.location.href = 'index.html';
+
+  // ── State ────────────────────────────────────
+  let editImages = [];
+  let sidebarCollapsed = false;
+
+  // ── Sidebar ──────────────────────────────────
+  function toggleSidebar() {
+    sidebarCollapsed = !sidebarCollapsed;
+    document.getElementById('sidebar').classList.toggle('collapsed', sidebarCollapsed);
+    document.getElementById('main-wrap').classList.toggle('expanded', sidebarCollapsed);
+  }
+
+  // ── Panels ───────────────────────────────────
+  function showPanel(name) {
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+    document.getElementById('panel-' + name)?.classList.add('active');
+    document.getElementById('sl-' + name)?.classList.add('active');
+    const titles = { overview:'Overview', listings:'All Listings', add:'Add New Listing', requests:'Property Requests', messages:'Messages', settings:'Agent Settings' };
+    document.getElementById('topbar-title').textContent = titles[name] || name;
+    if (name === 'overview')  loadOverview();
+    if (name === 'listings')  renderListings();
+    if (name === 'add')       { clearForm(); document.getElementById('add-title').textContent = 'Add New Listing'; document.getElementById('save-btn-text').textContent = 'Publish Listing'; }
+    if (name === 'requests')  renderRequests();
+    if (name === 'messages')  renderMessages();
+    if (name === 'settings')  loadSettings();
+  }
+
+  // ── Toast ─────────────────────────────────────
+  function toast(msg) {
+    const wrap = document.getElementById('toast-container');
+    const el = document.createElement('div'); el.className = 'toast-item'; el.textContent = msg;
+    wrap.appendChild(el);
+    setTimeout(() => el.remove(), 3200);
+  }
+
+  // ── Logout ────────────────────────────────────
+  function doLogout() { LM.logout(); window.location.href = 'index.html'; }
+
+  // ── Overview ─────────────────────────────────
+  function loadOverview() {
+    const ls = LM.getListings(), rq = LM.getRequests(), ms = LM.getMessages();
+    document.getElementById('ov-total').textContent    = ls.length;
+    document.getElementById('ov-active').textContent  = ls.filter(l=>l.status!=='let').length;
+    document.getElementById('ov-requests').textContent = rq.length;
+    document.getElementById('ov-messages').textContent = ms.length;
+
+    // Badges
+    if (rq.length > 0) { document.getElementById('badge-requests').textContent = rq.length; document.getElementById('badge-requests').style.display = ''; }
+    if (ms.length > 0) { document.getElementById('badge-messages').textContent = ms.length; document.getElementById('badge-messages').style.display = ''; }
+
+    const div = document.getElementById('ov-recent-requests');
+    if (rq.length === 0) { div.innerHTML = '<span style="color:var(--stone);font-size:0.85rem;">No requests yet.</span>'; return; }
+    div.innerHTML = rq.slice(0,4).map(r => `
+      <div style="padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.05);">
+        <div style="color:var(--cream);font-size:0.88rem;font-weight:500;">${r.name}</div>
+        <div style="color:var(--stone);font-size:0.76rem;">${r.type} · ${r.budget||'—'} · ${LM.fmt(r.created)}</div>
+      </div>`).join('');
+  }
+
+  // ── Listings Render ───────────────────────────
+  function renderListings() {
+    const ls = LM.getListings();
+    const div = document.getElementById('listings-list');
+    if (ls.length === 0) { div.innerHTML = '<p style="color:var(--stone);">No listings yet. <a onclick="showPanel(\'add\')" style="color:var(--gold);cursor:pointer;">Add one now →</a></p>'; return; }
+    div.innerHTML = ls.map(l => `
+      <div class="data-row">
+        <div class="data-thumb">
+          ${l.images?.length ? `<img src="${l.images[0]}" alt=""/>` : typeEmoji(l.type)}
+        </div>
+        <div style="flex:1;min-width:0;">
+          <div class="d-flex gap-2 flex-wrap mb-1">
+            <span style="background:${typeBg(l.type)};color:${typeFg(l.type)};padding:2px 10px;border-radius:100px;font-size:0.68rem;font-weight:700;text-transform:uppercase;">${l.type}</span>
+            ${l.featured ? '<span style="background:var(--gold);color:var(--ink);padding:2px 9px;border-radius:100px;font-size:0.65rem;font-weight:700;">★ Featured</span>' : ''}
+            ${l.status==='let' ? '<span style="background:#444;color:#ccc;padding:2px 9px;border-radius:100px;font-size:0.65rem;">Sold/Let</span>' : ''}
+          </div>
+          <div style="color:var(--cream);font-weight:600;font-size:0.93rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${l.title}</div>
+          <div style="color:var(--stone);font-size:0.78rem;">${l.location} · ${l.price}</div>
+        </div>
+        <div class="d-flex gap-2 flex-wrap">
+          <button class="btn-dark btn-sm" onclick="editListing(${l.id})"><i class="bi bi-pencil me-1"></i>Edit</button>
+          <button class="btn-danger btn-sm" onclick="deleteListing(${l.id})"><i class="bi bi-trash me-1"></i>Delete</button>
+        </div>
+      </div>`).join('');
+  }
+
+  // ── Add / Edit ────────────────────────────────
+  function setType(btn, val) {
+    document.querySelectorAll('.type-chip').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('e-type').value = val;
+    document.getElementById('wrap-beds').style.display  = val==='land' ? 'none' : '';
+    document.getElementById('wrap-baths').style.display = val==='land' ? 'none' : '';
+  }
+
+  function handleUpload(e) {
+    Array.from(e.target.files).forEach(f => {
+      const r = new FileReader();
+      r.onload = ev => { editImages.push(ev.target.result); renderPreviews(); };
+      r.readAsDataURL(f);
+    });
+    e.target.value = '';
+  }
+
+  function renderPreviews() {
+    document.getElementById('img-previews').innerHTML = editImages.map((img, i) => `
+      <div style="position:relative;width:80px;height:80px;border-radius:10px;overflow:hidden;flex-shrink:0;border:1px solid rgba(255,255,255,0.1);">
+        <img src="${img}" style="width:100%;height:100%;object-fit:cover;"/>
+        <button onclick="removeImg(${i})" style="position:absolute;top:3px;right:3px;background:rgba(0,0,0,0.7);border:none;color:#fff;width:22px;height:22px;border-radius:50%;cursor:pointer;font-size:0.7rem;display:flex;align-items:center;justify-content:center;line-height:1;">✕</button>
+        ${i===0 ? '<span style="position:absolute;bottom:3px;left:3px;background:var(--gold);color:var(--ink);font-size:0.58rem;padding:1px 5px;border-radius:100px;font-weight:700;">COVER</span>' : ''}
+      </div>`).join('');
+  }
+
+  function removeImg(i) { editImages.splice(i, 1); renderPreviews(); }
+
+  function clearForm() {
+    ['e-id','e-title','e-price','e-location','e-size','e-beds','e-baths','e-desc'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+    document.getElementById('e-type').value    = 'house';
+    document.getElementById('e-status').value  = 'available';
+    document.getElementById('e-featured').checked = false;
+    document.querySelectorAll('.type-chip').forEach((c,i) => c.classList.toggle('active', i===0));
+    document.getElementById('wrap-beds').style.display  = '';
+    document.getElementById('wrap-baths').style.display = '';
+    editImages = [];
+    renderPreviews();
+  }
+
+  function editListing(id) {
+    const l = LM.getListing(id);
+    if (!l) return;
+    showPanel('add');
+    document.getElementById('add-title').textContent    = 'Edit Listing';
+    document.getElementById('save-btn-text').textContent = 'Save Changes';
+    document.getElementById('e-id').value       = l.id;
+    document.getElementById('e-title').value    = l.title;
+    document.getElementById('e-price').value    = l.price;
+    document.getElementById('e-location').value = l.location;
+    document.getElementById('e-size').value     = l.size || '';
+    document.getElementById('e-beds').value     = l.bedrooms || '';
+    document.getElementById('e-baths').value    = l.bathrooms || '';
+    document.getElementById('e-desc').value     = l.desc;
+    document.getElementById('e-featured').checked = !!l.featured;
+    document.getElementById('e-status').value   = l.status || 'available';
+    document.getElementById('e-type').value     = l.type;
+    document.querySelectorAll('.type-chip').forEach(c => c.classList.remove('active'));
+    document.getElementById('tc-' + l.type)?.classList.add('active');
+    document.getElementById('wrap-beds').style.display  = l.type==='land' ? 'none' : '';
+    document.getElementById('wrap-baths').style.display = l.type==='land' ? 'none' : '';
+    editImages = [...(l.images || [])];
+    renderPreviews();
+  }
+
+  function saveListing() {
+    const title = document.getElementById('e-title').value.trim();
+    const price = document.getElementById('e-price').value.trim();
+    if (!title) return toast('⚠️ Title is required');
+    if (!price) return toast('⚠️ Price is required');
+
+    const id = document.getElementById('e-id').value;
+    const data = {
+      id: id ? parseInt(id) : Date.now(),
+      type:      document.getElementById('e-type').value,
+      title, price,
+      location:  document.getElementById('e-location').value,
+      size:      document.getElementById('e-size').value,
+      bedrooms:  parseInt(document.getElementById('e-beds').value) || null,
+      bathrooms: parseInt(document.getElementById('e-baths').value) || null,
+      desc:      document.getElementById('e-desc').value,
+      featured:  document.getElementById('e-featured').checked,
+      status:    document.getElementById('e-status').value,
+      images:    editImages,
+      created:   id ? (LM.getListing(id)?.created || Date.now()) : Date.now(),
+    };
+
+    if (id) LM.updateListing(data);
+    else    LM.addListing(data);
+
+    clearForm();
+    showPanel('listings');
+    toast('✅ Listing saved successfully!');
+  }
+
+  function deleteListing(id) {
+    if (!confirm('Delete this listing? This cannot be undone.')) return;
+    LM.deleteListing(id);
+    renderListings();
+    loadOverview();
+    toast('Listing deleted');
+  }
+
+  // ── Requests ─────────────────────────────────
+  function renderRequests() {
+    const rq = LM.getRequests();
+    document.getElementById('req-count').textContent = `${rq.length} request${rq.length!==1?'s':''}`;
+    const div = document.getElementById('requests-list');
+    if (rq.length === 0) { div.innerHTML = '<p style="color:var(--stone);">No property requests received yet.</p>'; return; }
+    div.innerHTML = rq.map(r => `
+      <div class="inbox-card">
+        <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-3">
+          <div>
+            <div style="color:var(--cream);font-weight:600;font-size:1rem;">${r.name}</div>
+            <div class="inbox-meta">${LM.fmtFull(r.created)}</div>
+          </div>
+          <div class="d-flex gap-2 flex-wrap">
+            <a href="tel:${r.phone}" class="btn-g btn-sm" style="text-decoration:none;"><i class="bi bi-telephone"></i>Call</a>
+            <a href="https://wa.me/${r.phone.replace(/\D/g,'')}" target="_blank" class="btn-wa"><i class="bi bi-whatsapp me-1"></i>WA</a>
+            <button onclick="LM.deleteRequest(${r.id});renderRequests();loadOverview();" class="btn-danger btn-sm">Delete</button>
+          </div>
+        </div>
+        <div class="row g-2 mb-2">
+          ${field('Type',r.type)} ${field('Phone',r.phone)} ${field('Email',r.email||'—')}
+          ${field('Location',r.location||'—')} ${field('Budget',r.budget||'—')} ${field('Bedrooms',r.bedrooms||'Any')}
+          ${field('Purpose',r.purpose||'—')} ${field('Urgency',r.urgency||'—')}
+        </div>
+        ${r.details ? `<div style="background:var(--ink-700);border-radius:8px;padding:12px;margin-top:8px;"><span style="color:var(--stone);font-size:0.72rem;display:block;margin-bottom:4px;">ADDITIONAL DETAILS</span><p style="color:var(--stone-light);font-size:0.85rem;margin:0;line-height:1.7;">${r.details}</p></div>` : ''}
+      </div>`).join('');
+  }
+
+  function field(label, val) {
+    return `<div class="col-6 col-md-3"><span style="color:var(--stone);font-size:0.72rem;display:block;">${label}</span><span style="color:var(--cream);font-size:0.83rem;">${val}</span></div>`;
+  }
+
+  // ── Messages ─────────────────────────────────
+  function renderMessages() {
+    const ms = LM.getMessages();
+    const div = document.getElementById('messages-list');
+    if (ms.length === 0) { div.innerHTML = '<p style="color:var(--stone);">No messages yet.</p>'; return; }
+    div.innerHTML = ms.map(m => `
+      <div class="inbox-card">
+        <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-2">
+          <div>
+            <div style="color:var(--cream);font-weight:600;">${m.name}</div>
+            <div class="inbox-meta">${m.phone||''} · ${LM.fmtFull(m.created)}</div>
+          </div>
+          <button onclick="LM.deleteMessage(${m.id});renderMessages();loadOverview();" class="btn-danger btn-sm">Delete</button>
+        </div>
+        ${m.subject ? `<div style="color:var(--gold);font-size:0.85rem;font-weight:600;margin-bottom:6px;">${m.subject}</div>` : ''}
+        <p style="color:var(--stone-light);font-size:0.88rem;line-height:1.7;margin:0;">${m.body}</p>
+      </div>`).join('');
+  }
+
+  // ── Settings ──────────────────────────────────
+  function loadSettings() {
+    const a = LM.getAgent();
+    document.getElementById('s-name').value  = a.name  || '';
+    document.getElementById('s-phone').value = a.phone || '';
+    document.getElementById('s-wa').value    = a.wa    || '';
+    document.getElementById('s-email').value = a.email || '';
+    document.getElementById('s-bio').value   = a.bio   || '';
+  }
+
+  function saveSettings() {
+    LM.saveAgent({
+      name:  document.getElementById('s-name').value,
+      phone: document.getElementById('s-phone').value,
+      wa:    document.getElementById('s-wa').value,
+      email: document.getElementById('s-email').value,
+      bio:   document.getElementById('s-bio').value,
+    });
+    toast('✅ Settings saved! Changes will appear on the website.');
+  }
+
+  // ── Helpers ───────────────────────────────────
+  function typeEmoji(t) { return { house:'🏠', room:'🛏️', land:'🌿' }[t] || '🏠'; }
+  function typeBg(t) { return { house:'#C9A84C', room:'#4A8FB8', land:'#5A9B5A' }[t] || '#555'; }
+  function typeFg(t) { return t==='house' ? '#0E1117' : '#fff'; }
+
+  // ── Init ──────────────────────────────────────
+  document.addEventListener('DOMContentLoaded', () => {
+    loadOverview();
+  });
+</script>
+</body>
+</html>
