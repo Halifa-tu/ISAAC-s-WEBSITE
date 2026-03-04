@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>{{ action }} Post — Hali-Tech Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Fraunces:wght@300;400&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    :root{--g:#1a7a4a;--g2:#15693e;--glt:#e8f5ee;--b:#1a5fa8;--ink:#0f1a14;--body:#3d4d44;--mute:#7a8e82;--bdr:#dde9e2;--bg:#f7faf8;}
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--body);}
+    .sidebar{position:fixed;top:0;left:0;bottom:0;width:240px;background:#fff;border-right:1px solid var(--bdr);padding:1.5rem;display:flex;flex-direction:column;z-index:50;}
+    .s-brand{font-family:'Fraunces',serif;font-size:1.35rem;font-weight:400;color:var(--ink);margin-bottom:.25rem;}
+    .s-brand b{color:var(--g);}
+    .s-sub{font-size:.65rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--mute);margin-bottom:2rem;}
+    .s-link{display:flex;align-items:center;gap:.65rem;padding:.6rem .75rem;border-radius:8px;font-size:.82rem;font-weight:600;color:var(--mute);text-decoration:none;transition:all .2s;margin-bottom:.15rem;}
+    .s-link:hover,.s-link.active{background:var(--glt);color:var(--g);}
+    .s-link i{width:16px;text-align:center;font-size:.85rem;}
+    .s-footer{margin-top:auto;}
+    .s-footer a{display:flex;align-items:center;gap:.6rem;font-size:.78rem;color:var(--mute);text-decoration:none;padding:.5rem;}
+    .s-footer a:hover{color:#ef4444;}
+    .main{margin-left:240px;padding:2rem;}
+    .card{background:#fff;border:1px solid var(--bdr);border-radius:12px;padding:2.25rem;}
+    .pg-title{font-family:'Fraunces',serif;font-size:1.5rem;font-weight:300;color:var(--ink);margin-bottom:1.75rem;}
+    label{font-size:.65rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--mute);display:block;margin-bottom:.35rem;}
+    input,select,textarea{width:100%;background:var(--bg);border:1px solid var(--bdr);border-radius:8px;padding:.75rem 1rem;font-family:'Plus Jakarta Sans',sans-serif;font-size:.875rem;color:var(--ink);outline:none;transition:all .2s;margin-bottom:1.1rem;appearance:none;}
+    input:focus,select:focus,textarea:focus{border-color:var(--g);background:#fff;box-shadow:0 0 0 3px rgba(26,122,74,.08);}
+    textarea{resize:vertical;min-height:200px;}
+    .check-wrap{display:flex;align-items:center;gap:.6rem;margin-bottom:1.25rem;}
+    .check-wrap input[type=checkbox]{width:18px;height:18px;margin-bottom:0;cursor:pointer;accent-color:var(--g);}
+    .check-wrap label{font-size:.82rem;font-weight:600;color:var(--body);letter-spacing:0;text-transform:none;margin-bottom:0;cursor:pointer;}
+    .btn-g{background:var(--g);color:#fff;font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:.7rem 1.75rem;border:none;border-radius:7px;cursor:pointer;transition:all .2s;}
+    .btn-g:hover{background:var(--g2);}
+    .btn-out{background:transparent;color:var(--mute);font-size:.78rem;font-weight:700;padding:.7rem 1.5rem;border:1.5px solid var(--bdr);border-radius:7px;cursor:pointer;transition:all .2s;text-decoration:none;display:inline-block;}
+    .btn-out:hover{border-color:var(--g);color:var(--g);}
+    .char-count{font-size:.7rem;color:var(--mute);text-align:right;margin-top:-.8rem;margin-bottom:.9rem;}
+    @media(max-width:900px){.sidebar{display:none;}.main{margin-left:0;}}
+  </style>
+</head>
+<body>
+<div class="sidebar">
+  <div class="s-brand">Hali<b>-Tech</b></div>
+  <div class="s-sub">Admin Portal</div>
+  <a href="/admin" class="s-link"><i class="fas fa-gauge"></i>Dashboard</a>
+  <a href="/admin/post/new" class="s-link active"><i class="fas fa-plus"></i>New Post</a>
+  <a href="/admin#posts" class="s-link"><i class="fas fa-newspaper"></i>All Posts</a>
+  <a href="/admin#enquiries" class="s-link"><i class="fas fa-envelope"></i>Enquiries</a>
+  <a href="/" target="_blank" class="s-link"><i class="fas fa-globe"></i>View Website</a>
+  <div class="s-footer"><a href="/admin/logout"><i class="fas fa-sign-out-alt"></i>Sign Out</a></div>
+</div>
+
+<div class="main">
+  <div style="max-width:720px;">
+    <div class="card">
+      <div class="pg-title">{{ action }} Post</div>
+      <form method="POST">
+        <label>Post Type *</label>
+        <select name="type" required>
+          <option value="" disabled {% if not post %}selected{% endif %}>Select type…</option>
+          <option value="announcement" {% if post and post.type=='announcement' %}selected{% endif %}>📢 Announcement</option>
+          <option value="blog" {% if post and post.type=='blog' %}selected{% endif %}>📝 Blog Post</option>
+          <option value="service_update" {% if post and post.type=='service_update' %}selected{% endif %}>🔧 Service Update</option>
+        </select>
+
+        <label>Title *</label>
+        <input type="text" name="title" placeholder="e.g. We now offer evening appointments" required
+               value="{{ post.title if post else '' }}" maxlength="120" id="title-inp">
+        <div class="char-count"><span id="title-len">{{ post.title|length if post else 0 }}</span>/120</div>
+
+        <label>Short Summary <span style="font-weight:400;text-transform:none;letter-spacing:0;">(shown on the website cards)</span></label>
+        <input type="text" name="summary" placeholder="One sentence describing this post…" maxlength="160"
+               value="{{ post.summary if post else '' }}" id="sum-inp">
+        <div class="char-count"><span id="sum-len">{{ post.summary|length if post else 0 }}</span>/160</div>
+
+        <label>Full Content *</label>
+        <textarea name="content" placeholder="Write the full content here…" required>{{ post.content if post else '' }}</textarea>
+
+        <div class="check-wrap">
+          <input type="checkbox" name="published" id="pub" {% if not post or post.published %}checked{% endif %}>
+          <label for="pub">Publish immediately (visible on website)</label>
+        </div>
+
+        <div class="d-flex gap-3 flex-wrap">
+          <button type="submit" class="btn-g"><i class="fas fa-save me-2"></i>{{ 'Save Changes' if post else 'Publish Post' }}</button>
+          <a href="/admin" class="btn-out">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  const ti=document.getElementById('title-inp');
+  const tl=document.getElementById('title-len');
+  ti.addEventListener('input',()=>tl.textContent=ti.value.length);
+  const si=document.getElementById('sum-inp');
+  const sl=document.getElementById('sum-len');
+  si.addEventListener('input',()=>sl.textContent=si.value.length);
+</script>
+</body>
+</html>

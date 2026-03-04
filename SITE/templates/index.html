@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hali-Tech — Professional IT Solutions</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+ :root {
+  --navy:  #0a1f0f;
+  --navy2: #0f2914;
+  --blue:  #ff6a00;
+  --blue-l:#ff8c3a;
+  --cyan:  #2ecc71;
+  --cyan-s:rgba(46,204,113,0.12);
+  --blue-s:rgba(255,106,0,0.12);
+  --white: #ffffff;
+  --off:   #e8f5ee;
+  --muted: #7a9e85;
+  --bdr:   rgba(255,255,255,0.07);
+  --card:  rgba(255,255,255,0.04);
+}
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+    html{scroll-behavior:smooth;}
+    body{font-family:'Outfit',sans-serif;background:var(--navy);color:var(--white);overflow-x:hidden;}
+
+    /* Noise overlay */
+    body::before{content:'';position:fixed;inset:0;
+      background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events:none;z-index:1;opacity:0.5;}
+
+    /* Grid bg */
+    .grid-bg{position:absolute;inset:0;overflow:hidden;z-index:0;}
+    .grid-bg::before{content:'';position:absolute;inset:0;
+      background-image:linear-gradient(rgba(0,102,255,0.06) 1px,transparent 1px),linear-gradient(90deg,rgba(0,102,255,0.06) 1px,transparent 1px);
+      background-size:50px 50px;}
+    .grid-bg::after{content:'';position:absolute;inset:0;
+      background:radial-gradient(ellipse 70% 60% at 50% 0%,rgba(0,102,255,0.15) 0%,transparent 70%);}
+
+    /* Orbs */
+    .orb{position:absolute;border-radius:50%;filter:blur(80px);pointer-events:none;}
+    .orb-1{width:500px;height:500px;background:rgba(0,102,255,0.18);top:-150px;right:-100px;}
+    .orb-2{width:400px;height:400px;background:rgba(0,200,240,0.1);bottom:0;left:-100px;}
+
+    /* NAV */
+    #navbar{position:fixed;top:0;left:0;right:0;z-index:200;padding:1.5rem 0;transition:all .4s;}
+    #navbar.scrolled{background:rgba(5,13,26,0.95);backdrop-filter:blur(24px);padding:.9rem 0;border-bottom:1px solid var(--bdr);}
+    .brand{font-family:'Outfit',sans-serif;font-weight:800;font-size:1.5rem;letter-spacing:-.02em;color:var(--white);text-decoration:none;}
+    .brand span{color:var(--cyan);}
+    .nav-a{color:var(--muted);font-size:.875rem;font-weight:500;text-decoration:none;padding:.4rem .9rem;transition:color .2s;border-radius:6px;}
+    .nav-a:hover{color:var(--white);}
+    .btn-cta{background:var(--blue);color:white;padding:.55rem 1.4rem;border-radius:8px;font-weight:600;font-size:.875rem;border:none;cursor:pointer;transition:all .25s;text-decoration:none;display:inline-block;}
+    .btn-cta:hover{background:var(--blue-l);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,102,255,.4);color:white;}
+
+    /* MOBILE MENU — slide-in panel */
+    #mob-overlay{display:none;position:fixed;inset:0;z-index:299;background:rgba(5,13,26,.7);backdrop-filter:blur(4px);}
+    #mob-overlay.open{display:block;}
+    #mob-panel{display:none;position:fixed;top:0;right:0;bottom:0;width:80%;max-width:300px;z-index:300;
+      background:#0b1628;border-left:1px solid var(--bdr);padding:1.5rem;
+      transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);overflow-y:auto;}
+    #mob-panel.open{display:block;transform:translateX(0);}
+    .mob-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid var(--bdr);}
+    .mob-brand{font-family:'Outfit',sans-serif;font-weight:800;font-size:1.3rem;color:var(--white);}
+    .mob-brand span{color:var(--cyan);}
+    .mob-close{width:32px;height:32px;border-radius:50%;border:1px solid var(--bdr);background:var(--card);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);font-size:.85rem;}
+    .mob-close:hover{border-color:var(--cyan);color:var(--cyan);}
+    #mob-panel a{display:flex;align-items:center;gap:.65rem;padding:.85rem 0;font-size:.875rem;font-weight:500;color:var(--muted);text-decoration:none;border-bottom:1px solid var(--bdr);}
+    #mob-panel a:last-of-type{border-bottom:none;}
+    #mob-panel a:hover{color:var(--white);}
+    #mob-panel a i{width:18px;color:var(--cyan);font-size:.85rem;}
+    .mob-cta{margin-top:1.5rem;}
+    .mob-cta a{display:flex;align-items:center;justify-content:center;gap:.5rem;background:var(--blue);color:#fff;padding:.85rem;border-radius:8px;font-size:.875rem;font-weight:600;text-decoration:none;border:none;}
+    .mob-cta a:hover{background:var(--blue-l);color:#fff;}
+
+    /* HERO */
+    #hero{min-height:100vh;display:flex;align-items:center;padding:8rem 0 5rem;position:relative;overflow:hidden;}
+    .hero-tag{display:inline-flex;align-items:center;gap:.5rem;border:1px solid rgba(0,200,240,.3);background:rgba(0,200,240,.07);color:var(--cyan);padding:.35rem 1rem;border-radius:100px;font-size:.78rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;margin-bottom:1.5rem;animation:fadeUp .6s ease both;}
+    .hero-title{font-family:'Outfit',sans-serif;font-weight:800;font-size:clamp(2.6rem,6vw,5rem);line-height:1.06;letter-spacing:-.03em;animation:fadeUp .7s .1s ease both;}
+    .hero-title .hl{background:linear-gradient(90deg,var(--blue),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .hero-sub{font-size:1.05rem;color:var(--muted);line-height:1.75;font-weight:300;max-width:500px;animation:fadeUp .7s .2s ease both;}
+    .hero-btns{animation:fadeUp .7s .3s ease both;}
+    .btn-outline{border:1.5px solid var(--bdr);color:var(--off);padding:.7rem 1.6rem;border-radius:8px;font-weight:500;font-size:.9rem;background:transparent;cursor:pointer;transition:all .25s;text-decoration:none;display:inline-block;}
+    .btn-outline:hover{border-color:rgba(255,255,255,.3);background:rgba(255,255,255,.05);color:white;}
+    .trust-row{animation:fadeUp .7s .4s ease both;}
+    .trust-pill{display:inline-flex;align-items:center;gap:.45rem;background:var(--card);border:1px solid var(--bdr);padding:.4rem .9rem;border-radius:100px;font-size:.78rem;color:var(--muted);}
+    .trust-pill i{color:var(--cyan);font-size:.7rem;}
+
+    /* HERO CARD */
+    .hero-card{background:rgba(255,255,255,.04);border:1px solid var(--bdr);border-radius:20px;padding:1.5rem;backdrop-filter:blur(12px);animation:fadeUp .8s .4s ease both;position:relative;overflow:hidden;}
+    .hero-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(0,200,240,.5),transparent);}
+    .terminal-bar{display:flex;gap:5px;margin-bottom:1rem;}
+    .t-dot{width:10px;height:10px;border-radius:50%;}
+    .service-chip{display:inline-flex;align-items:center;gap:.4rem;background:rgba(0,102,255,.15);border:1px solid rgba(0,102,255,.25);color:var(--off);padding:.35rem .8rem;border-radius:8px;font-size:.78rem;font-weight:500;margin:.2rem;}
+    .service-chip i{color:var(--cyan);font-size:.7rem;}
+    .status-bar{background:rgba(0,200,240,.07);border:1px solid rgba(0,200,240,.15);border-radius:10px;padding:.75rem 1rem;margin-top:1rem;display:flex;align-items:center;justify-content:space-between;}
+    .pulse{width:8px;height:8px;border-radius:50%;background:var(--cyan);display:inline-block;animation:pulseAnim 1.4s infinite;}
+
+    /* STATS */
+    .stats-strip{background:rgba(255,255,255,.03);border-top:1px solid var(--bdr);border-bottom:1px solid var(--bdr);padding:2.5rem 0;}
+    .stat-n{font-family:'Outfit',sans-serif;font-weight:800;font-size:2.2rem;background:linear-gradient(135deg,var(--white),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .stat-l{font-size:.8rem;color:var(--muted);margin-top:.15rem;}
+
+    /* SECTION BASE */
+    section{padding:5.5rem 0;position:relative;}
+    .eyebrow{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.15em;color:var(--cyan);margin-bottom:.6rem;}
+    .sec-title{font-family:'Outfit',sans-serif;font-weight:800;font-size:clamp(1.9rem,3.5vw,2.8rem);letter-spacing:-.025em;line-height:1.1;}
+    .sec-sub{font-size:1rem;color:var(--muted);line-height:1.7;font-weight:300;}
+
+    /* ABOUT */
+    #about{background:var(--navy2);}
+    .about-pill{display:flex;align-items:center;gap:.75rem;background:var(--card);border:1px solid var(--bdr);border-radius:12px;padding:1rem 1.25rem;margin-bottom:.75rem;transition:all .2s;}
+    .about-pill:hover{border-color:rgba(0,200,240,.3);background:rgba(0,200,240,.05);}
+    .about-pill-icon{width:38px;height:38px;min-width:38px;border-radius:10px;background:var(--blue-s);display:flex;align-items:center;justify-content:center;color:var(--cyan);font-size:.9rem;}
+    .about-pill-text{font-size:.875rem;font-weight:500;color:var(--off);}
+    .about-pill-sub{font-size:.78rem;color:var(--muted);margin-top:.1rem;}
+
+    /* SERVICES */
+    #services{background:var(--navy);}
+    .cat-header{display:flex;align-items:center;gap:.75rem;margin-bottom:1.25rem;}
+    .cat-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;}
+    .cat-title{font-family:'Outfit',sans-serif;font-weight:700;font-size:1.1rem;}
+    .svc-grid{display:flex;flex-wrap:wrap;gap:.5rem;}
+    .svc-item{background:var(--card);border:1px solid var(--bdr);border-radius:8px;padding:.5rem .9rem;font-size:.82rem;color:var(--off);transition:all .2s;display:flex;align-items:center;gap:.4rem;}
+    .svc-item:hover{border-color:rgba(0,200,240,.3);color:white;background:rgba(0,200,240,.06);}
+    .svc-item::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--cyan);flex-shrink:0;}
+
+    /* WHY */
+    #why{background:var(--navy2);}
+    .why-card{background:var(--card);border:1px solid var(--bdr);border-radius:20px;padding:2rem;height:100%;text-align:center;transition:all .3s;position:relative;overflow:hidden;}
+    .why-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--blue),var(--cyan));transform:scaleX(0);transform-origin:left;transition:transform .3s;}
+    .why-card:hover{transform:translateY(-5px);border-color:rgba(0,102,255,.3);}
+    .why-card:hover::after{transform:scaleX(1);}
+    .why-icon{width:56px;height:56px;border-radius:16px;background:linear-gradient(135deg,var(--blue-s),var(--cyan-s));display:flex;align-items:center;justify-content:center;font-size:1.4rem;margin:0 auto 1.25rem;border:1px solid rgba(0,200,240,.15);}
+    .why-title{font-weight:700;font-size:1rem;margin-bottom:.5rem;}
+    .why-desc{font-size:.85rem;color:var(--muted);line-height:1.65;}
+
+    /* PRICING */
+    #pricing{background:var(--navy);}
+    .price-card{background:var(--card);border:1.5px solid var(--bdr);border-radius:20px;padding:2rem;height:100%;transition:all .3s;position:relative;}
+    .price-card.hot{background:linear-gradient(160deg,rgba(0,102,255,.12),rgba(0,200,240,.05));border-color:rgba(0,102,255,.4);}
+    .price-card:not(.hot):hover{border-color:rgba(0,200,240,.3);transform:translateY(-4px);}
+    .hot-badge{position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:linear-gradient(90deg,var(--blue),var(--cyan));color:white;font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:.25rem 1rem;border-radius:100px;}
+    .plan-label{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin-bottom:.5rem;}
+    .plan-price{font-family:'Outfit',sans-serif;font-weight:800;font-size:2.6rem;letter-spacing:-.03em;line-height:1;}
+    .plan-desc{font-size:.85rem;color:var(--muted);margin-top:.4rem;margin-bottom:1.25rem;}
+    .plan-feature{display:flex;align-items:flex-start;gap:.6rem;font-size:.85rem;color:var(--off);padding:.35rem 0;}
+    .plan-feature i{color:var(--cyan);font-size:.7rem;margin-top:3px;flex-shrink:0;}
+    .btn-plan{width:100%;padding:.75rem;border-radius:10px;font-weight:600;font-size:.9rem;cursor:pointer;transition:all .25s;border:none;margin-top:1.5rem;}
+    .btn-plan-primary{background:var(--blue);color:white;}
+    .btn-plan-primary:hover{background:var(--blue-l);box-shadow:0 8px 24px rgba(0,102,255,.4);}
+    .btn-plan-ghost{background:transparent;color:var(--off);border:1.5px solid var(--bdr)!important;}
+    .btn-plan-ghost:hover{border-color:rgba(255,255,255,.3)!important;background:rgba(255,255,255,.05);}
+
+    /* UPDATES / POSTS */
+    #updates{background:var(--navy2);}
+    .post-card{background:var(--card);border:1px solid var(--bdr);border-radius:16px;padding:1.5rem;height:100%;transition:all .3s;cursor:pointer;}
+    .post-card:hover{border-color:rgba(0,200,240,.3);transform:translateY(-4px);box-shadow:0 8px 32px rgba(0,0,0,.3);}
+    .post-badge{display:inline-block;font-size:.62rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:.22rem .65rem;border-radius:4px;margin-bottom:.75rem;}
+    .post-badge.blog{background:rgba(0,102,255,.2);color:#60a5fa;}
+    .post-badge.announcement{background:rgba(0,200,240,.15);color:var(--cyan);}
+    .post-badge.service_update{background:rgba(251,191,36,.15);color:#fbbf24;}
+    .post-title{font-size:.95rem;font-weight:700;color:var(--white);margin-bottom:.5rem;line-height:1.4;}
+    .post-summary{font-size:.82rem;color:var(--muted);line-height:1.7;}
+    .post-date{font-size:.7rem;color:var(--muted);margin-top:.75rem;display:flex;align-items:center;gap:.35rem;}
+    .post-read-more{display:inline-flex;align-items:center;gap:.4rem;font-size:.75rem;font-weight:600;color:var(--cyan);margin-top:.85rem;transition:gap .2s;}
+    .post-card:hover .post-read-more{gap:.7rem;}
+    .filter-btn{background:transparent;color:var(--muted);border:1px solid var(--bdr);border-radius:6px;padding:.35rem .9rem;font-size:.72rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:all .2s;font-family:'Outfit',sans-serif;}
+    .filter-btn:hover{border-color:rgba(0,200,240,.3);color:var(--white);}
+    .filter-btn.active{background:var(--blue);color:white;border-color:var(--blue);}
+    #updates-empty{display:none;text-align:center;padding:3rem;color:var(--muted);font-size:.9rem;}
+
+    /* POST MODAL */
+    .modal-overlay{position:fixed;inset:0;background:rgba(5,13,26,.8);backdrop-filter:blur(8px);z-index:1000;display:flex;align-items:center;justify-content:center;padding:1.25rem;opacity:0;pointer-events:none;transition:opacity .3s;}
+    .modal-overlay.open{opacity:1;pointer-events:all;}
+    .modal-box{background:#0b1628;border:1px solid var(--bdr);border-radius:20px;width:100%;max-width:660px;max-height:90vh;overflow-y:auto;box-shadow:0 32px 80px rgba(0,0,0,.5);transform:translateY(20px) scale(.98);transition:transform .35s cubic-bezier(.34,1.56,.64,1);position:relative;}
+    .modal-overlay.open .modal-box{transform:translateY(0) scale(1);}
+    .modal-top{padding:1.75rem 2rem 1rem;display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;position:sticky;top:0;background:#0b1628;border-radius:20px 20px 0 0;z-index:2;border-bottom:1px solid var(--bdr);}
+    .modal-close{width:34px;height:34px;border-radius:50%;border:1px solid var(--bdr);background:var(--card);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.85rem;color:var(--muted);flex-shrink:0;transition:all .2s;}
+    .modal-close:hover{border-color:var(--cyan);color:var(--cyan);}
+    .modal-title{font-family:'Outfit',sans-serif;font-size:1.4rem;font-weight:700;color:var(--white);line-height:1.2;margin-bottom:.3rem;}
+    .modal-date{font-size:.72rem;color:var(--muted);display:flex;align-items:center;gap:.35rem;}
+    .modal-body{padding:1.5rem 2rem 2rem;}
+    .modal-content-text{font-size:.9rem;color:var(--off);line-height:1.9;white-space:pre-wrap;word-break:break-word;}
+    .modal-cta{margin-top:1.75rem;padding-top:1.25rem;border-top:1px solid var(--bdr);display:flex;align-items:center;gap:1rem;flex-wrap:wrap;}
+    .modal-cta a{display:inline-flex;align-items:center;gap:.45rem;font-size:.8rem;font-weight:600;color:var(--cyan);text-decoration:none;}
+    .modal-cta a:hover{color:white;}
+
+    /* TESTIMONIALS */
+    #testimonials{background:var(--navy2);}
+    .testi-card{background:var(--card);border:1px solid var(--bdr);border-radius:20px;padding:1.75rem;height:100%;transition:all .3s;}
+    .testi-card:hover{border-color:rgba(0,200,240,.25);}
+    .stars-row{color:#f59e0b;font-size:.85rem;margin-bottom:.75rem;}
+    .testi-text{font-size:.9rem;line-height:1.72;color:var(--off);font-weight:300;font-style:italic;margin-bottom:1.25rem;}
+    .avatar-circle{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;color:white;}
+    .a-name{font-weight:600;font-size:.875rem;}
+    .a-role{font-size:.775rem;color:var(--muted);}
+
+    /* FAQ */
+    #faq{background:var(--navy);}
+    .faq-wrap{background:var(--card);border:1px solid var(--bdr);border-radius:14px;margin-bottom:.6rem;overflow:hidden;transition:border-color .2s;}
+    .faq-wrap:hover{border-color:rgba(0,200,240,.2);}
+    .faq-wrap.open{border-color:rgba(0,102,255,.4);}
+    .faq-q{padding:1.1rem 1.4rem;display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-weight:600;font-size:.9rem;}
+    .faq-icon{width:26px;height:26px;border-radius:50%;background:rgba(0,102,255,.15);display:flex;align-items:center;justify-content:center;color:var(--blue-l);font-size:.7rem;transition:all .3s;}
+    .faq-wrap.open .faq-icon{background:var(--blue);color:white;transform:rotate(180deg);}
+    .faq-a{max-height:0;overflow:hidden;transition:max-height .4s ease;font-size:.875rem;color:var(--muted);line-height:1.7;}
+    .faq-a-inner{padding:0 1.4rem 1.1rem;}
+    .faq-wrap.open .faq-a{max-height:300px;}
+
+    /* CONTACT */
+    #contact{background:var(--navy2);}
+    .contact-card{background:rgba(255,255,255,.03);border:1px solid var(--bdr);border-radius:24px;padding:2.5rem;position:relative;overflow:hidden;}
+    .contact-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(0,200,240,.4),transparent);}
+    .inp-label{font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:.4rem;display:block;}
+    .inp{width:100%;background:rgba(255,255,255,.05);border:1px solid var(--bdr);border-radius:10px;padding:.8rem 1rem;font-family:'Outfit',sans-serif;font-size:.9rem;color:var(--white);outline:none;transition:all .2s;}
+    .inp::placeholder{color:rgba(255,255,255,.2);}
+    .inp:focus{border-color:rgba(0,102,255,.5);background:rgba(0,102,255,.05);box-shadow:0 0 0 3px rgba(0,102,255,.1);}
+    select.inp{cursor:pointer;appearance:auto;-webkit-appearance:auto;color-scheme:dark;}
+    select.inp option{background:#0b1628;color:var(--white);}
+    .ci-row{display:flex;align-items:center;gap:1rem;padding:.9rem;border-radius:12px;transition:background .2s;text-decoration:none;}
+    .ci-row:hover{background:rgba(255,255,255,.04);}
+    .ci-ic{width:42px;height:42px;min-width:42px;border-radius:11px;background:var(--blue-s);border:1px solid rgba(0,102,255,.2);display:flex;align-items:center;justify-content:center;color:var(--cyan);font-size:1rem;}
+    .ci-label{font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);}
+    .ci-val{font-size:.9rem;color:var(--off);font-weight:500;margin-top:.1rem;}
+
+    /* URGENCY SELECTOR */
+    .urgency-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;}
+    .urg-opt{position:relative;}
+    .urg-opt input[type="radio"]{position:absolute;opacity:0;width:0;height:0;}
+    .urg-lbl{display:flex;flex-direction:column;align-items:center;gap:.3rem;padding:.65rem .4rem;border:1px solid var(--bdr);border-radius:8px;cursor:pointer;transition:all .2s;text-align:center;background:var(--card);}
+    .urg-lbl .urg-icon{font-size:1.1rem;}
+    .urg-lbl .urg-name{font-size:.75rem;font-weight:700;color:var(--off);}
+    .urg-lbl .urg-time{font-size:.65rem;color:var(--muted);}
+    .urg-opt input[type="radio"]:checked + .urg-lbl{border-color:var(--cyan);background:rgba(0,200,240,.08);}
+    .urg-opt input[type="radio"]:checked + .urg-lbl .urg-name{color:var(--cyan);}
+
+    /* FOOTER */
+    footer{background:var(--navy);border-top:1px solid var(--bdr);padding:3.5rem 0 2rem;}
+    .foot-brand{font-family:'Outfit',sans-serif;font-weight:800;font-size:1.4rem;color:var(--white);}
+    .foot-brand span{color:var(--cyan);}
+    .foot-link{color:var(--muted);text-decoration:none;font-size:.85rem;display:block;margin-bottom:.5rem;transition:color .2s;}
+    .foot-link:hover{color:var(--white);}
+    .foot-head{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.25);margin-bottom:.9rem;}
+    .soc-btn{width:36px;height:36px;border-radius:8px;background:rgba(255,255,255,.06);border:1px solid var(--bdr);display:inline-flex;align-items:center;justify-content:center;color:var(--muted);font-size:.85rem;text-decoration:none;transition:all .2s;}
+    .soc-btn:hover{background:var(--blue);color:white;border-color:var(--blue);}
+
+    /* WA FLOAT */
+    .wa-float{position:fixed;bottom:1.75rem;right:1.75rem;z-index:200;width:54px;height:54px;border-radius:50%;background:#25d366;color:white;display:flex;align-items:center;justify-content:center;font-size:1.5rem;text-decoration:none;box-shadow:0 8px 24px rgba(37,211,102,.4);transition:all .25s;animation:floatBob 3s ease-in-out infinite;}
+    .wa-float:hover{transform:scale(1.1);color:white;}
+
+    /* TOAST */
+    #toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(80px);background:rgba(11,22,40,.95);backdrop-filter:blur(16px);border:1px solid var(--bdr);color:var(--white);padding:.9rem 1.5rem;border-radius:14px;font-size:.875rem;z-index:9999;display:flex;align-items:center;gap:.75rem;opacity:0;transition:all .4s cubic-bezier(.34,1.56,.64,1);box-shadow:0 16px 40px rgba(0,0,0,.4);}
+    #toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
+    #toast i{color:var(--cyan);}
+
+    /* REVEAL */
+    .reveal{opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s ease;}
+    .reveal.in{opacity:1;transform:translateY(0);}
+
+    @keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes pulseAnim{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.8)}}
+    @keyframes floatBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+
+    @media(max-width:768px){
+      .hero-title{font-size:2.3rem;}
+      .orb{display:none;}
+      .urgency-grid{grid-template-columns:1fr 1fr;}
+      .modal-top{padding:1.25rem 1.25rem 1rem;}
+      .modal-body{padding:1rem 1.25rem 1.5rem;}
+      .modal-title{font-size:1.2rem;}
+    }
+    @media(max-width:480px){
+      .urgency-grid{grid-template-columns:1fr;}
+    }
+  </style>
+</head>
+<body>
+
+<a href="https://wa.me/233507094316" target="_blank" class="wa-float"><i class="fab fa-whatsapp"></i></a>
+<div id="toast"><i class="fas fa-check-circle"></i><span id="toastTxt">Done!</span></div>
+
+<!-- NAV -->
+<nav id="navbar">
+  <div class="container">
+    <div class="d-flex align-items-center justify-content-between">
+      <a href="#" class="brand">Hali<span>-Tech</span></a>
+      <div class="d-none d-lg-flex align-items-center gap-1">
+        <a href="#about"        class="nav-a">About</a>
+        <a href="#services"     class="nav-a">Services</a>
+        <a href="#pricing"      class="nav-a">Pricing</a>
+        <a href="#updates"      class="nav-a">Updates</a>
+        <a href="#testimonials" class="nav-a">Reviews</a>
+        <a href="#faq"          class="nav-a">FAQ</a>
+        <a href="#contact"      class="btn-cta ms-2">Contact Us</a>
+      </div>
+      <button class="d-lg-none btn border-0 text-white p-1" id="mob-btn" style="font-size:1.3rem;">
+        <i class="fas fa-bars"></i>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- MOBILE OVERLAY + PANEL -->
+<div id="mob-overlay" onclick="closeMob()"></div>
+<div id="mob-panel">
+  <div class="mob-head">
+    <div class="mob-brand">Hali<span>-Tech</span></div>
+    <button class="mob-close" onclick="closeMob()">&#x2715;</button>
+  </div>
+  <a href="#about"        onclick="closeMob()"><i class="fas fa-info-circle"></i>About</a>
+  <a href="#services"     onclick="closeMob()"><i class="fas fa-laptop-code"></i>Services</a>
+  <a href="#pricing"      onclick="closeMob()"><i class="fas fa-tag"></i>Pricing</a>
+  <a href="#updates"      onclick="closeMob()"><i class="fas fa-newspaper"></i>Updates</a>
+  <a href="#testimonials" onclick="closeMob()"><i class="fas fa-star"></i>Reviews</a>
+  <a href="#faq"          onclick="closeMob()"><i class="fas fa-question-circle"></i>FAQ</a>
+  <div class="mob-cta">
+    <a href="#contact" onclick="closeMob()"><i class="fas fa-paper-plane"></i>Contact Us</a>
+  </div>
+</div>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="grid-bg"></div>
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="container position-relative" style="z-index:2;">
+    <div class="row align-items-center g-5">
+      <div class="col-lg-6">
+        <div class="hero-tag"><span class="pulse"></span> Ghana's Trusted IT Partner</div>
+        <h1 class="hero-title mb-4">Professional <span class="hl">Tech Solutions</span><br>For Everyone</h1>
+        <p class="hero-sub mb-5">From laptop repairs to website development, network security to graphic design — Hali-Tech delivers fast, reliable, and affordable IT services for individuals, students, and businesses across Ghana.</p>
+        <div class="hero-btns d-flex flex-wrap gap-3 mb-4">
+          <a href="#contact" class="btn-cta">Get a Free Quote</a>
+          <a href="#services" class="btn-outline">Explore Services</a>
+        </div>
+        <div class="trust-row d-flex flex-wrap gap-2">
+          <div class="trust-pill"><i class="fas fa-check-circle"></i> Physical &amp; Remote Support</div>
+          <div class="trust-pill"><i class="fas fa-check-circle"></i> Fast Response</div>
+          <div class="trust-pill"><i class="fas fa-check-circle"></i> Affordable Pricing</div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="hero-card">
+          <div class="terminal-bar">
+            <div class="t-dot" style="background:#ff5f57;"></div>
+            <div class="t-dot" style="background:#febc2e;"></div>
+            <div class="t-dot" style="background:#28c840;"></div>
+            <span style="margin-left:auto;font-family:'Fira Code',monospace;font-size:.72rem;color:var(--muted);">hali-tech.services</span>
+          </div>
+          <div style="font-family:'Fira Code',monospace;font-size:.78rem;color:var(--muted);margin-bottom:1rem;">
+            <span style="color:var(--cyan);">$</span> services --list
+          </div>
+          <div>
+            <div class="service-chip"><i class="fas fa-laptop"></i> Laptop &amp; PC Services</div>
+            <div class="service-chip"><i class="fas fa-globe"></i> Website Development</div>
+            <div class="service-chip"><i class="fas fa-shield-halved"></i> Network Security</div>
+            <div class="service-chip"><i class="fas fa-palette"></i> Graphic Designing</div>
+            <div class="service-chip"><i class="fas fa-wifi"></i> Network Setup</div>
+            <div class="service-chip"><i class="fas fa-virus-slash"></i> Virus Removal</div>
+            <div class="service-chip"><i class="fas fa-gauge-high"></i> PC Optimization</div>
+            <div class="service-chip"><i class="fas fa-code"></i> Web Maintenance</div>
+          </div>
+          <div class="status-bar">
+            <div style="display:flex;align-items:center;gap:.5rem;font-size:.78rem;color:var(--off);"><span class="pulse"></span> Remote Support Active</div>
+            <div style="font-size:.78rem;color:var(--cyan);font-weight:600;">&#128205; Oyarifa, Accra</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats-strip">
+  <div class="container">
+    <div class="row text-center g-4">
+      <div class="col-6 col-md-3 reveal">
+        <div class="stat-n"><span data-count="500">0</span>+</div>
+        <div class="stat-l">Clients Served</div>
+      </div>
+      <div class="col-6 col-md-3 reveal">
+        <div class="stat-n"><span data-count="4">0</span></div>
+        <div class="stat-l">Core Service Areas</div>
+      </div>
+      <div class="col-6 col-md-3 reveal">
+        <div class="stat-n"><span data-count="24">0</span><span style="-webkit-text-fill-color:initial;color:var(--cyan);">/7</span></div>
+        <div class="stat-l">Remote Support</div>
+      </div>
+      <div class="col-6 col-md-3 reveal">
+        <div class="stat-n"><span data-count="100">0</span><span style="-webkit-text-fill-color:initial;color:var(--cyan);">%</span></div>
+        <div class="stat-l">Satisfaction Focus</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="container">
+    <div class="row g-5 align-items-center">
+      <div class="col-lg-5 reveal">
+        <p class="eyebrow">About Hali-Tech</p>
+        <h2 class="sec-title mb-3">Your local tech partner — online &amp; on-site</h2>
+        <p class="sec-sub mb-4">Hali-Tech is a professional technology service provider based in Oyarifa, Accra. We offer reliable IT solutions for individuals, students, and businesses — whether you need hands-on support at your location or fast remote assistance.</p>
+        <a href="#contact" class="btn-cta">Work With Us</a>
+      </div>
+      <div class="col-lg-7 reveal">
+        <div class="about-pill"><div class="about-pill-icon"><i class="fas fa-star"></i></div><div><div class="about-pill-text">Professional Service</div><div class="about-pill-sub">Qualified technicians with real-world experience across all service areas.</div></div></div>
+        <div class="about-pill"><div class="about-pill-icon"><i class="fas fa-bolt"></i></div><div><div class="about-pill-text">Fast Response Time</div><div class="about-pill-sub">We respond quickly — remote sessions can start within minutes of your call.</div></div></div>
+        <div class="about-pill"><div class="about-pill-icon"><i class="fas fa-wallet"></i></div><div><div class="about-pill-text">Affordable Pricing</div><div class="about-pill-sub">Transparent, competitive pricing with no hidden charges. We work within your budget.</div></div></div>
+        <div class="about-pill"><div class="about-pill-icon"><i class="fas fa-house-laptop"></i></div><div><div class="about-pill-text">Remote &amp; Home Service</div><div class="about-pill-sub">We come to you, or connect remotely. Your convenience is our priority.</div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="container">
+    <div class="text-center mb-5 reveal">
+      <p class="eyebrow">Our Services</p>
+      <h2 class="sec-title mb-2">What We Do</h2>
+      <p class="sec-sub mx-auto" style="max-width:520px;">Four specialised service areas covering everything your device, website, network, or brand might need.</p>
+    </div>
+    <div class="row g-4">
+      <div class="col-lg-6 reveal">
+        <div style="background:var(--card);border:1px solid var(--bdr);border-radius:20px;padding:2rem;height:100%;">
+          <div class="cat-header"><div class="cat-icon" style="background:rgba(0,102,255,.15);color:#60a5fa;"><i class="fas fa-laptop"></i></div><div><div class="cat-title">&#128187; Laptop &amp; PC Services</div><div style="font-size:.8rem;color:var(--muted);">Hardware, software, and performance</div></div></div>
+          <div class="svc-grid">
+            <div class="svc-item">Windows Installation &amp; Activation</div>
+            <div class="svc-item">Microsoft Office Setup</div>
+            <div class="svc-item">Software Installation &amp; Troubleshooting</div>
+            <div class="svc-item">Laptop &amp; PC Setup</div>
+            <div class="svc-item">System Formatting</div>
+            <div class="svc-item">Driver Installation &amp; Updates</div>
+            <div class="svc-item">PC Optimization (Speed Boost)</div>
+            <div class="svc-item">Virus Removal</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6 reveal">
+        <div style="background:var(--card);border:1px solid var(--bdr);border-radius:20px;padding:2rem;height:100%;">
+          <div class="cat-header"><div class="cat-icon" style="background:rgba(0,200,240,.12);color:var(--cyan);"><i class="fas fa-globe"></i></div><div><div class="cat-title">&#127760; Website Development</div><div style="font-size:.8rem;color:var(--muted);">Custom websites for every need</div></div></div>
+          <div class="svc-grid">
+            <div class="svc-item">Business Websites</div>
+            <div class="svc-item">Personal Portfolio Websites</div>
+            <div class="svc-item">School &amp; Project Websites</div>
+            <div class="svc-item">Website Setup &amp; Maintenance</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6 reveal">
+        <div style="background:var(--card);border:1px solid var(--bdr);border-radius:20px;padding:2rem;height:100%;">
+          <div class="cat-header"><div class="cat-icon" style="background:rgba(16,185,129,.12);color:#34d399;"><i class="fas fa-shield-halved"></i></div><div><div class="cat-title">&#128272; Network &amp; Security</div><div style="font-size:.8rem;color:var(--muted);">Connectivity &amp; protection</div></div></div>
+          <div class="svc-grid">
+            <div class="svc-item">Network Setup</div>
+            <div class="svc-item">Router Configuration</div>
+            <div class="svc-item">Network Security Implementation</div>
+            <div class="svc-item">Basic Cybersecurity Protection</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6 reveal">
+        <div style="background:var(--card);border:1px solid var(--bdr);border-radius:20px;padding:2rem;height:100%;">
+          <div class="cat-header"><div class="cat-icon" style="background:rgba(168,85,247,.12);color:#c084fc;"><i class="fas fa-palette"></i></div><div><div class="cat-title">&#127912; Graphic Designing</div><div style="font-size:.8rem;color:var(--muted);">Visual identity &amp; marketing</div></div></div>
+          <div class="svc-grid">
+            <div class="svc-item">Flyers</div>
+            <div class="svc-item">Logos</div>
+            <div class="svc-item">Business Cards</div>
+            <div class="svc-item">Social Media Designs</div>
+            <div class="svc-item">Posters &amp; Banners</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY -->
+<section id="why">
+  <div class="container">
+    <div class="text-center mb-5 reveal">
+      <p class="eyebrow">Why Hali-Tech?</p>
+      <h2 class="sec-title">Built around your satisfaction</h2>
+    </div>
+    <div class="row g-4">
+      <div class="col-sm-6 col-lg-3 reveal"><div class="why-card"><div class="why-icon"><i class="fas fa-award" style="color:var(--cyan);"></i></div><div class="why-title">Professional Service</div><div class="why-desc">Every job is handled with expertise, care, and attention to detail — no shortcuts.</div></div></div>
+      <div class="col-sm-6 col-lg-3 reveal"><div class="why-card"><div class="why-icon"><i class="fas fa-bolt" style="color:#facc15;"></i></div><div class="why-title">Fast Response Time</div><div class="why-desc">We don't keep you waiting. Remote sessions can begin within minutes of reaching out.</div></div></div>
+      <div class="col-sm-6 col-lg-3 reveal"><div class="why-card"><div class="why-icon"><i class="fas fa-tag" style="color:#4ade80;"></i></div><div class="why-title">Affordable Pricing</div><div class="why-desc">Quality tech service doesn't have to break the bank. We keep it fair and transparent.</div></div></div>
+      <div class="col-sm-6 col-lg-3 reveal"><div class="why-card"><div class="why-icon"><i class="fas fa-house-laptop" style="color:#c084fc;"></i></div><div class="why-title">Remote &amp; Home Service</div><div class="why-desc">Can't come to us? We come to you — or fix it remotely from wherever you are.</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing">
+  <div class="container">
+    <div class="text-center mb-5 reveal">
+      <p class="eyebrow">Pricing</p>
+      <h2 class="sec-title mb-2">Simple, Affordable Plans</h2>
+      <p class="sec-sub mx-auto" style="max-width:480px;">Need a custom quote? Just reach out — we tailor pricing to your specific needs.</p>
+    </div>
+    <div class="row g-4 justify-content-center">
+      <div class="col-md-4 reveal">
+        <div class="price-card">
+          <div class="plan-label">Basic</div>
+          <div class="plan-price">GH&#8373;<span data-count="50">0</span></div>
+          <div class="plan-desc">Great for quick fixes &amp; software needs</div>
+          <hr style="border-color:var(--bdr);">
+          <div class="plan-feature"><i class="fas fa-check"></i>Windows / Office Installation</div>
+          <div class="plan-feature"><i class="fas fa-check"></i>Driver Updates</div>
+          <div class="plan-feature"><i class="fas fa-check"></i>Software Troubleshooting</div>
+          <div class="plan-feature"><i class="fas fa-check"></i>PC Setup Assistance</div>
+          <div class="plan-feature"><i class="fas fa-check"></i>Remote Support</div>
+          <button class="btn-plan btn-plan-ghost" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">Get a Quote</button>
+        </div>
+      </div>
+      <div class="col-md-4 reveal">
+        <div class="price-card hot">
+          <div class="hot-badge">Most Popular</div>
+          <div class="plan-label">Standard</div>
+          <div class="plan-price">GH&#8373;<span data-count="120">0</span></div>
+          <div class="plan-desc">Full device service + design or web</div>
+          <hr style="border-color:rgba(255,255,255,.08);">
+          <div class="plan-feature"><i class="fas fa-check"></i>Everything in Basic</div>
+          <div class="plan-feature"><i class="fas fa-check"></i>Virus Removal &amp; PC Optimization</div>
+          <div class="plan-feature"><i class="fas fa-check"></i>System Formatting</div>
+          <div class="plan-feature"><i class="fas fa-check"></i>Logo or Flyer Design</div>
+          <div class="plan-feature"><i class="fas fa-check"></i>Network / Router Setup</div>
+          <div class="plan-feature"><i class="fas fa-check"></i>Home Service Available</div>
+          <button class="btn-plan btn-plan-primary" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">Book Now</button>
+        </div>
+      </div>
+      <div class="col-md-4 reveal">
+        <div class="price-card">
+          <div class="plan-label">Premium</div>
+          <div class="plan-price" style="font-size:2rem;">Custom</div>
+          <div class="plan-desc">For businesses &amp; full projects</div>
+          <hr style="border-color:var(--bdr);">
+          <div class="plan-feature"><i class="fas fa-check"></i>Full Business Website</div>
+          <div class="plan-feature"><i class="fas fa-check"></i>Complete Network Security</div>
+          <div class="plan-feature"><i class="fas fa-check"></i>Brand Identity Design</div>
+          <div class="plan-feature"><i class="fas fa-check"></i>Ongoing Maintenance</div>
+          <div class="plan-feature"><i class="fas fa-check"></i>Priority Support</div>
+          <div class="plan-feature"><i class="fas fa-check"></i>Dedicated Account Support</div>
+          <button class="btn-plan btn-plan-ghost" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">Contact Us</button>
+        </div>
+      </div>
+    </div>
+    <p class="text-center mt-4" style="font-size:.82rem;color:var(--muted);">* Prices are starting rates. Final price depends on scope. Contact us for a free, no-obligation quote.</p>
+  </div>
+</section>
+
+<!-- UPDATES -->
+<section id="updates">
+  <div class="container">
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-4 reveal">
+      <div>
+        <p class="eyebrow">Latest</p>
+        <h2 class="sec-title">News &amp; Updates</h2>
+      </div>
+      <div class="d-flex gap-2 flex-wrap" id="post-filters">
+        <button class="filter-btn active" onclick="filterPosts('all',this)">All</button>
+        <button class="filter-btn" onclick="filterPosts('announcement',this)">Announcements</button>
+        <button class="filter-btn" onclick="filterPosts('blog',this)">Blog</button>
+        <button class="filter-btn" onclick="filterPosts('service_update',this)">Service Updates</button>
+      </div>
+    </div>
+    <div class="row g-4" id="posts-grid">
+      <div class="col-12 text-center py-5" id="posts-loading" style="color:var(--muted);font-size:.9rem;">
+        <i class="fas fa-circle-notch fa-spin me-2"></i>Loading updates&hellip;
+      </div>
+    </div>
+    <div id="updates-empty">No posts found in this category yet.</div>
+  </div>
+</section>
+
+<!-- POST MODAL -->
+<div class="modal-overlay" id="postModal" onclick="closeModalOverlay(event)">
+  <div class="modal-box">
+    <div class="modal-top">
+      <div>
+        <div class="post-badge" id="modalBadge"></div>
+        <div class="modal-title" id="modalTitle"></div>
+        <div class="modal-date"><i class="fas fa-clock"></i>&nbsp;<span id="modalDate"></span></div>
+      </div>
+      <button class="modal-close" onclick="closeModal()">&#x2715;</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-content-text" id="modalContent"></div>
+      <div class="modal-cta">
+        <a href="#contact" onclick="closeModal()"><i class="fas fa-paper-plane"></i>Get in touch</a>
+        <a href="https://wa.me/233507094316" target="_blank"><i class="fab fa-whatsapp"></i>WhatsApp us</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TESTIMONIALS -->
+<section id="testimonials">
+  <div class="container">
+    <div class="text-center mb-5 reveal">
+      <p class="eyebrow">Testimonials</p>
+      <h2 class="sec-title">What Our Clients Say</h2>
+    </div>
+    <div class="row g-4">
+      <div class="col-md-4 reveal"><div class="testi-card"><div class="stars-row">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p class="testi-text">"My laptop was so slow I could barely open Chrome. Hali-Tech optimized it within an hour — it now runs like it's brand new. Amazing service and very affordable!"</p><div class="d-flex align-items-center gap-3"><div class="avatar-circle" style="background:linear-gradient(135deg,#0066ff,#00c8f0);">AK</div><div><div class="a-name">Abena Kyei</div><div class="a-role">Student, University of Ghana</div></div></div></div></div>
+      <div class="col-md-4 reveal"><div class="testi-card"><div class="stars-row">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p class="testi-text">"They built my business website in less than a week and it looks incredibly professional. The remote support during setup was smooth and they explained everything clearly."</p><div class="d-flex align-items-center gap-3"><div class="avatar-circle" style="background:linear-gradient(135deg,#10b981,#06b6d4);">KO</div><div><div class="a-name">Kwame Osei</div><div class="a-role">Small Business Owner, Accra</div></div></div></div></div>
+      <div class="col-md-4 reveal"><div class="testi-card"><div class="stars-row">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p class="testi-text">"Got my office network set up and secured within a day. The team was professional, punctual, and very knowledgeable. I will definitely use Hali-Tech again!"</p><div class="d-flex align-items-center gap-3"><div class="avatar-circle" style="background:linear-gradient(135deg,#f59e0b,#ef4444);">EM</div><div><div class="a-name">Esi Mensah</div><div class="a-role">Office Manager, Oyarifa</div></div></div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <div class="text-center mb-5 reveal"><p class="eyebrow">FAQ</p><h2 class="sec-title">Common Questions</h2></div>
+        <div class="faq-wrap reveal"><div class="faq-q">Do you offer remote support?<div class="faq-icon"><i class="fas fa-chevron-down"></i></div></div><div class="faq-a"><div class="faq-a-inner">Yes! Hali-Tech provides full remote support for software issues, installations, troubleshooting, and more. All you need is an internet connection. Contact us via WhatsApp or call and we'll connect to your device securely.</div></div></div>
+        <div class="faq-wrap reveal"><div class="faq-q">Can you come to my home or office?<div class="faq-icon"><i class="fas fa-chevron-down"></i></div></div><div class="faq-a"><div class="faq-a-inner">Absolutely. We offer home and office visits within Oyarifa and surrounding areas in Accra. Just book an appointment via WhatsApp or call and we'll arrange a time that works for you.</div></div></div>
+        <div class="faq-wrap reveal"><div class="faq-q">How much does a service cost?<div class="faq-icon"><i class="fas fa-chevron-down"></i></div></div><div class="faq-a"><div class="faq-a-inner">Pricing depends on the type and complexity of the service. Our basic software services start from GH&#8373;50. We offer transparent, upfront quotes with no hidden charges — contact us for a free estimate before committing to anything.</div></div></div>
+        <div class="faq-wrap reveal"><div class="faq-q">How long does a typical repair or setup take?<div class="faq-icon"><i class="fas fa-chevron-down"></i></div></div><div class="faq-a"><div class="faq-a-inner">Most software services (Windows installation, virus removal, optimization) are completed within 1–3 hours. Website projects typically take 3–7 days depending on complexity. We always give you an honest timeline upfront.</div></div></div>
+        <div class="faq-wrap reveal"><div class="faq-q">Do you build websites for students and small businesses?<div class="faq-icon"><i class="fas fa-chevron-down"></i></div></div><div class="faq-a"><div class="faq-a-inner">Yes! We specialize in business websites, personal portfolios, and school/project websites at student-friendly prices. Whether you need a single page or a multi-page site, we've got you covered.</div></div></div>
+        <div class="faq-wrap reveal"><div class="faq-q">Is my data safe when you access my computer remotely?<div class="faq-icon"><i class="fas fa-chevron-down"></i></div></div><div class="faq-a"><div class="faq-a-inner">Yes. We only access your system with your full permission, and you can watch everything we do in real time. We use trusted, industry-standard remote support tools and never access your files beyond what is needed to fix the issue.</div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="container">
+    <div class="row g-5 align-items-start">
+      <div class="col-lg-5 reveal">
+        <p class="eyebrow">Contact Us</p>
+        <h2 class="sec-title mb-3">Let's fix it — fast</h2>
+        <p class="sec-sub mb-4">Reach out via WhatsApp, call, or email. We respond quickly and give free quotes with no pressure.</p>
+        <a href="https://wa.me/233507094316" target="_blank" class="ci-row"><div class="ci-ic"><i class="fab fa-whatsapp"></i></div><div><div class="ci-label">WhatsApp / Call</div><div class="ci-val">050 709 4316</div></div></a>
+        <a href="mailto:halitechfix@gmail.com" class="ci-row text-decoration-none"><div class="ci-ic"><i class="fas fa-envelope"></i></div><div><div class="ci-label">Email</div><div class="ci-val">halitechfix@gmail.com</div></div></a>
+        <div class="ci-row"><div class="ci-ic"><i class="fas fa-location-dot"></i></div><div><div class="ci-label">Location</div><div class="ci-val">Oyarifa, opp. Special Ice Water Co., Accra</div></div></div>
+        <div class="ci-row"><div class="ci-ic"><i class="fas fa-wifi"></i></div><div><div class="ci-label">Remote Support</div><div class="ci-val">Available nationwide</div></div></div>
+      </div>
+      <div class="col-lg-7 reveal">
+        <div class="contact-card">
+          <h5 style="font-weight:700;margin-bottom:1.5rem;font-size:1.1rem;">Send Us a Message</h5>
+          <div class="row g-3">
+            <div class="col-md-6"><label class="inp-label">Your Name *</label><input class="inp" id="cName" type="text" placeholder="e.g. Kwame Asante"></div>
+            <div class="col-md-6"><label class="inp-label">Phone / WhatsApp</label><input class="inp" id="cPhone" type="tel" placeholder="e.g. 050 123 4567"></div>
+            <div class="col-12"><label class="inp-label">Email Address *</label><input class="inp" id="cEmail" type="email" placeholder="your@email.com"></div>
+            <div class="col-12">
+              <label class="inp-label">Service Needed *</label>
+              <select class="inp" id="cService">
+                <option value="" disabled selected>Select a service&hellip;</option>
+                <option value="Laptop / PC Repair and Setup">Laptop / PC Repair &amp; Setup</option>
+                <option value="Windows or Office Installation">Windows or Office Installation</option>
+                <option value="Virus Removal and PC Optimization">Virus Removal &amp; PC Optimization</option>
+                <option value="Website Development">Website Development</option>
+                <option value="Network Setup and Security">Network Setup &amp; Security</option>
+                <option value="Graphic Design">Graphic Design</option>
+                <option value="Other / Not Sure">Other / Not Sure</option>
+              </select>
+            </div>
+            <div class="col-12">
+              <label class="inp-label">How urgent is this? *</label>
+              <div class="urgency-grid">
+                <div class="urg-opt"><input type="radio" name="urgency" id="urg1" value="Standard – 3 to 7 days"><label class="urg-lbl" for="urg1"><span class="urg-icon">&#128197;</span><span class="urg-name">Standard</span><span class="urg-time">3–7 days</span></label></div>
+                <div class="urg-opt"><input type="radio" name="urgency" id="urg2" value="Express – Same day / 24 hours"><label class="urg-lbl" for="urg2"><span class="urg-icon">&#9889;</span><span class="urg-name">Express</span><span class="urg-time">Same day / 24hrs</span></label></div>
+                <div class="urg-opt"><input type="radio" name="urgency" id="urg3" value="Emergency – Within 2 to 4 hours"><label class="urg-lbl" for="urg3"><span class="urg-icon">&#128293;</span><span class="urg-name">Emergency</span><span class="urg-time">Within 2–4 hrs</span></label></div>
+              </div>
+            </div>
+            <div class="col-12"><label class="inp-label">Message *</label><textarea class="inp" id="cMsg" rows="4" placeholder="Describe your issue or what you need help with..." style="resize:vertical;"></textarea></div>
+            <div class="col-12">
+              <button class="btn-cta w-100" style="padding:.85rem;font-size:.95rem;border-radius:10px;" id="sendBtn" onclick="sendMsg()">Send Message &#8594;</button>
+              <p style="font-size:.73rem;color:var(--muted);margin-top:.75rem;text-align:center;">We'll respond via WhatsApp and email within minutes during business hours.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="row g-4 mb-4">
+      <div class="col-lg-4">
+        <div class="foot-brand">Hali<span>-Tech</span></div>
+        <p style="font-size:.85rem;color:var(--muted);line-height:1.7;max-width:270px;margin-top:.6rem;">Professional IT solutions for individuals, students, and businesses. Fast. Affordable. Reliable.</p>
+        <div class="d-flex gap-2 mt-3">
+          <a href="https://wa.me/233507094316" target="_blank" class="soc-btn"><i class="fab fa-whatsapp"></i></a>
+          <a href="mailto:halitechfix@gmail.com" class="soc-btn"><i class="fas fa-envelope"></i></a>
+          <a href="#" class="soc-btn"><i class="fab fa-facebook-f"></i></a>
+          <a href="#" class="soc-btn"><i class="fab fa-instagram"></i></a>
+        </div>
+      </div>
+      <div class="col-6 col-lg-2">
+        <div class="foot-head">Services</div>
+        <a href="#services" class="foot-link">Laptop &amp; PC</a>
+        <a href="#services" class="foot-link">Web Development</a>
+        <a href="#services" class="foot-link">Network Security</a>
+        <a href="#services" class="foot-link">Graphic Design</a>
+      </div>
+      <div class="col-6 col-lg-2">
+        <div class="foot-head">Company</div>
+        <a href="#about" class="foot-link">About Us</a>
+        <a href="#why" class="foot-link">Why Hali-Tech</a>
+        <a href="#testimonials" class="foot-link">Reviews</a>
+        <a href="#faq" class="foot-link">FAQ</a>
+      </div>
+      <div class="col-lg-4">
+        <div class="foot-head">Contact</div>
+        <a href="https://wa.me/233507094316" target="_blank" class="foot-link"><i class="fab fa-whatsapp me-1"></i> 050 709 4316</a>
+        <a href="mailto:halitechfix@gmail.com" class="foot-link"><i class="fas fa-envelope me-1"></i> halitechfix@gmail.com</a>
+        <div class="foot-link"><i class="fas fa-location-dot me-1"></i> Oyarifa, Accra, Ghana</div>
+        <div class="foot-link"><i class="fas fa-wifi me-1"></i> Remote Support — Nationwide</div>
+      </div>
+    </div>
+    <div class="pt-3 d-flex flex-wrap justify-content-between align-items-center gap-2" style="border-top:1px solid var(--bdr);font-size:.78rem;color:var(--muted);">
+      <span>&copy; 2025 Hali-Tech. All rights reserved.</span>
+      <span>Built with Python &middot; Bootstrap</span>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  /* ── Navbar ── */
+  window.addEventListener('scroll',()=>document.getElementById('navbar').classList.toggle('scrolled',scrollY>40));
+
+  /* ── Mobile menu ── */
+  function openMob(){document.getElementById('mob-panel').classList.add('open');document.getElementById('mob-overlay').classList.add('open');document.body.style.overflow='hidden';}
+  function closeMob(){document.getElementById('mob-panel').classList.remove('open');document.getElementById('mob-overlay').classList.remove('open');document.body.style.overflow='';}
+  document.getElementById('mob-btn').addEventListener('click',openMob);
+
+  /* ── Scroll reveal + counters ── */
+  const ro=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{
+      if(!e.isIntersecting)return;
+      e.target.classList.add('in');
+      e.target.querySelectorAll('[data-count]').forEach(animCount);
+      ro.unobserve(e.target);
+    });
+  },{threshold:0.1});
+  document.querySelectorAll('.reveal').forEach((el,i)=>{
+    el.style.transitionDelay=(i%4*0.09)+'s';
+    ro.observe(el);
+  });
+
+  function animCount(el){
+    const target=+el.dataset.count,step=target/(1600/16);let cur=0;
+    const t=setInterval(()=>{cur+=step;if(cur>=target){cur=target;clearInterval(t);}el.textContent=Math.floor(cur).toLocaleString();},16);
+  }
+
+  /* ── FAQ ── */
+  document.querySelectorAll('.faq-q').forEach(q=>{
+    q.addEventListener('click',()=>{
+      const w=q.parentElement,open=w.classList.contains('open');
+      document.querySelectorAll('.faq-wrap').forEach(x=>x.classList.remove('open'));
+      if(!open)w.classList.add('open');
+    });
+  });
+
+  /* ── Posts ── */
+  let allPosts=[];
+  const typeLabel={blog:'Blog',announcement:'Announcement',service_update:'Service Update'};
+
+  async function loadPosts(){
+    try{
+      const r=await fetch('/api/posts');
+      allPosts=await r.json();
+      renderPosts(allPosts);
+    }catch{
+      document.getElementById('posts-loading').innerHTML='<i class="fas fa-exclamation-circle me-2"></i>Could not load posts.';
+    }
+  }
+
+  function renderPosts(posts){
+    const grid=document.getElementById('posts-grid');
+    const empty=document.getElementById('updates-empty');
+    document.getElementById('posts-loading').style.display='none';
+    if(!posts.length){grid.innerHTML='';empty.style.display='block';return;}
+    empty.style.display='none';
+    grid.innerHTML=posts.map(p=>{
+      const safe=JSON.stringify(p).replace(/'/g,"&#39;");
+      return `<div class="col-md-6 col-lg-4">
+        <div class="post-card" onclick='openModal(${safe})'>
+          <div class="post-badge ${p.type}">${typeLabel[p.type]||p.type}</div>
+          <div class="post-title">${esc(p.title)}</div>
+          <div class="post-summary">${esc(p.summary||p.content.substring(0,120)+'…')}</div>
+          <div class="post-date"><i class="fas fa-clock"></i> ${fmtDate(p.created_at)}</div>
+          <div class="post-read-more">Read full post <i class="fas fa-arrow-right" style="font-size:.62rem;"></i></div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  function filterPosts(type,btn){
+    document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    renderPosts(type==='all'?allPosts:allPosts.filter(p=>p.type===type));
+  }
+
+  /* ── Modal ── */
+  function openModal(p){
+    document.getElementById('modalBadge').className='post-badge '+p.type;
+    document.getElementById('modalBadge').textContent=typeLabel[p.type]||p.type;
+    document.getElementById('modalTitle').textContent=p.title;
+    document.getElementById('modalDate').textContent=fmtDate(p.created_at,'long');
+    document.getElementById('modalContent').textContent=p.content;
+    document.getElementById('postModal').classList.add('open');
+    document.body.style.overflow='hidden';
+  }
+  function closeModal(){document.getElementById('postModal').classList.remove('open');document.body.style.overflow='';}
+  function closeModalOverlay(e){if(e.target===document.getElementById('postModal'))closeModal();}
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+
+  /* ── Helpers ── */
+  function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+  function fmtDate(str,style){
+    try{return new Date(str).toLocaleDateString('en-GB',{day:'numeric',month:style==='long'?'long':'short',year:'numeric'});}
+    catch{return str;}
+  }
+
+  /* ── Toast ── */
+  function toast(msg,ok=true){
+    const t=document.getElementById('toast');
+    document.getElementById('toastTxt').textContent=msg;
+    t.querySelector('i').className=ok?'fas fa-check-circle':'fas fa-times-circle';
+    t.querySelector('i').style.color=ok?'var(--cyan)':'#ef4444';
+    t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3500);
+  }
+
+  /* ── Contact form ── */
+  async function sendMsg(){
+    const name=document.getElementById('cName').value.trim();
+    const phone=document.getElementById('cPhone').value.trim();
+    const email=document.getElementById('cEmail').value.trim();
+    const service=document.getElementById('cService').value;
+    const urgencyEl=document.querySelector('input[name="urgency"]:checked');
+    const msg=document.getElementById('cMsg').value.trim();
+    const btn=document.getElementById('sendBtn');
+    if(!name||!email||!service||!urgencyEl||!msg){toast('Please fill in all required fields.',false);return;}
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){toast('Enter a valid email address.',false);return;}
+    btn.innerHTML='<i class="fas fa-spinner fa-spin me-2"></i>Sending&hellip;';btn.disabled=true;
+    try{
+      const res=await fetch('/api/contact',{method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({name,phone,email,service,urgency:urgencyEl.value,message:msg})});
+      const d=await res.json();
+      if(d.success){
+        toast(d.message||"Message sent! We'll be in touch soon.");
+        ['cName','cPhone','cEmail','cMsg'].forEach(id=>document.getElementById(id).value='');
+        document.getElementById('cService').selectedIndex=0;
+        document.querySelectorAll('input[name="urgency"]').forEach(r=>r.checked=false);
+        if(d.wa_link)setTimeout(()=>window.open(d.wa_link,'_blank'),1200);
+      }else{toast(d.error||'Something went wrong.',false);}
+    }catch{toast("Message sent! We'll respond shortly.");}
+    btn.innerHTML='Send Message &#8594;';btn.disabled=false;
+  }
+
+  loadPosts();
+</script>
+</body>
+</html>
