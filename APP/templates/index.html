@@ -1,0 +1,162 @@
+{% extends 'base.html' %}
+{% block title %}{{ agent.business }} — Premium Properties in Ghana{% endblock %}
+
+{% block content %}
+
+<!-- HERO -->
+<section class="hero-section">
+  <div class="hero-grid"></div>
+  <div class="hero-glow" style="width:640px;height:640px;background:#C9A84C;top:-220px;right:-180px;"></div>
+  <div class="hero-glow" style="width:420px;height:420px;background:#4A8FB8;bottom:-120px;left:-100px;"></div>
+  <div class="container position-relative" style="z-index:2;">
+    <div class="row align-items-center g-5">
+      <div class="col-lg-7">
+        <span class="badge-pill">Accra · Kumasi · Takoradi · Tamale · Across Ghana</span>
+        <h1 class="hero-title">Discover Your<br>Dream <em>Property</em><br>in Ghana</h1>
+        <p style="color:var(--stone-light);font-size:1.05rem;max-width:520px;line-height:1.9;margin-bottom:36px;">
+          Premium houses, rooms &amp; land across Ghana. Verified listings, direct agent contact, no middlemen.
+        </p>
+        <form action="{{ url_for('properties') }}" method="get" class="search-bar mb-4">
+          <i class="bi bi-search" style="color:var(--gold);font-size:1.05rem;flex-shrink:0;"></i>
+          <select name="type" class="search-input">
+            <option value="">All Types</option>
+            <option value="house">Houses</option>
+            <option value="room">Rooms</option>
+            <option value="land">Land</option>
+          </select>
+          <div class="search-divider"></div>
+          <select name="budget" class="search-input">
+            <option value="">Any Budget</option>
+            <option value="low">Under GHS 200K</option>
+            <option value="mid">GHS 200K – 600K</option>
+            <option value="high">Above GHS 600K</option>
+          </select>
+          <div class="search-divider"></div>
+          <input name="loc" class="search-input" type="text" placeholder="Location…"/>
+          <button type="submit" class="btn-gold" style="flex-shrink:0;">Search</button>
+        </form>
+        <div class="d-flex gap-3 flex-wrap">
+          <a href="{{ url_for('properties') }}" class="btn-outline-gold">View All Properties</a>
+          <a href="{{ url_for('property_request') }}" class="btn-outline-gold">
+            <i class="bi bi-pencil-square me-2"></i>Request a Property
+          </a>
+        </div>
+      </div>
+      <div class="col-lg-5">
+        <div class="row g-3">
+          <div class="col-6"><div class="stat-card"><div class="stat-number">{{ total_active }}</div><div class="stat-label">Active Listings</div></div></div>
+          <div class="col-6"><div class="stat-card"><div class="stat-number">10+</div><div class="stat-label">Years Experience</div></div></div>
+          <div class="col-6"><div class="stat-card"><div class="stat-number">200+</div><div class="stat-label">Deals Closed</div></div></div>
+          <div class="col-6"><div class="stat-card"><div class="stat-number">100%</div><div class="stat-label">Satisfaction</div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURED -->
+<section class="py-5" style="background:var(--ink);">
+  <div class="container py-4">
+    <div class="d-flex align-items-end justify-content-between mb-5 flex-wrap gap-3">
+      <div>
+        <span class="eyebrow">Hand-Picked</span>
+        <h2 class="display-serif mb-0" style="font-size:clamp(1.8rem,3.5vw,2.8rem);">Featured Properties</h2>
+        <div class="section-divider"></div>
+      </div>
+      <a href="{{ url_for('properties') }}" class="btn-outline-gold">View All <i class="bi bi-arrow-right ms-1"></i></a>
+    </div>
+    {% if featured %}
+    <div class="row g-4">
+      {% for l in featured %}{% include '_property_card.html' %}{% endfor %}
+    </div>
+    {% else %}
+    <p style="color:var(--stone);">No featured listings yet.</p>
+    {% endif %}
+  </div>
+</section>
+
+<!-- WHY US -->
+<section class="py-5" style="background:var(--ink-800);">
+  <div class="container py-4">
+    <div class="text-center mb-5">
+      <span class="eyebrow">Why Us</span>
+      <h2 class="display-serif" style="font-size:clamp(1.8rem,3.5vw,2.8rem);">The {{ agent.business }} Difference</h2>
+      <div class="section-divider center"></div>
+    </div>
+    <div class="row g-4">
+      <div class="col-md-6 col-lg-3"><div class="service-card"><div class="icon-circle"><i class="bi bi-shield-check"></i></div><h5>Verified Listings</h5><p>Every property is personally inspected and verified before being published.</p></div></div>
+      <div class="col-md-6 col-lg-3"><div class="service-card"><div class="icon-circle"><i class="bi bi-telephone-fill"></i></div><h5>Direct Contact</h5><p>Speak directly with our agent — no middlemen, no delays, no hidden fees.</p></div></div>
+      <div class="col-md-6 col-lg-3"><div class="service-card"><div class="icon-circle"><i class="bi bi-house-heart"></i></div><h5>Custom Requests</h5><p>Can't find it? Submit a request and we'll source the perfect property for you.</p></div></div>
+      <div class="col-md-6 col-lg-3"><div class="service-card"><div class="icon-circle"><i class="bi bi-file-earmark-text"></i></div><h5>Document Support</h5><p>We guide you through every document and legal step for a smooth transaction.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- REVIEWS -->
+{% if reviews %}
+<section class="py-5" style="background:var(--ink);">
+  <div class="container py-4">
+    <div class="text-center mb-5">
+      <span class="eyebrow">What Clients Say</span>
+      <h2 class="display-serif" style="font-size:clamp(1.8rem,3.5vw,2.8rem);">Real Stories</h2>
+      <div class="section-divider center"></div>
+    </div>
+    <div class="row g-4">
+      {% for r in reviews %}
+      <div class="col-md-4">
+        <div class="testimonial-card">
+          <div class="stars">{{ '★' * r.rating }}{{ '☆' * (5 - r.rating) }}</div>
+          <p class="tquote">"{{ r.body }}"</p>
+          <div class="tauthor">
+            <div class="tav">{{ r.name[0] }}</div>
+            <div><div class="tname">{{ r.name }}</div><div class="trole">{{ r.location }}</div></div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    <div class="text-center mt-4">
+      <a href="#review-section" onclick="event.preventDefault(); document.getElementById('review-section').scrollIntoView({behavior:'smooth'}); setTimeout(function(){ if(document.getElementById('review-form-wrapper').style.display==='none') toggleReviewForm(); }, 500);" class="btn-outline-gold">Leave a Review</a>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- REVIEW FORM -->
+{% include '_review_form.html' %}
+
+<!-- CTA -->
+<section class="py-5" style="background:linear-gradient(135deg,#1a1f2e,#0E1117);">
+  <div class="container py-4 text-center">
+    <span class="eyebrow">Don't Wait</span>
+    <h2 class="display-serif mb-3" style="font-size:clamp(1.8rem,3.5vw,2.8rem);">Can't Find the Right Property?</h2>
+    <p style="color:var(--stone-light);max-width:520px;margin:0 auto 32px;line-height:1.8;font-size:0.95rem;">
+      Submit a custom property request and our agent will personally source options that match your needs.
+    </p>
+    <div class="d-flex gap-3 justify-content-center flex-wrap">
+      <a href="{{ url_for('property_request') }}" class="btn-gold" style="padding:13px 36px;">Submit a Request</a>
+      <a href="https://wa.me/{{ agent.wa }}" target="_blank" class="btn-wa" style="padding:13px 32px;">
+        <i class="bi bi-whatsapp me-2"></i>WhatsApp Us
+      </a>
+    </div>
+  </div>
+</section>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+function openReviewForm(e) {
+  if (e) e.preventDefault();
+  var wrapper = document.getElementById('review-form-wrapper');
+  if (wrapper) {
+    wrapper.classList.add('open');
+    var t = document.getElementById('review-btn-text');
+    var i = document.getElementById('review-btn-icon');
+    if (t) t.textContent = 'Cancel';
+    if (i) i.className = 'bi bi-x-circle me-2';
+    setTimeout(function(){ wrapper.scrollIntoView({behavior:'smooth',block:'start'}); }, 80);
+  }
+}
+</script>
+{% endblock %}

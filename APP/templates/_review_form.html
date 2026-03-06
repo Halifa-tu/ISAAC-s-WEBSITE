@@ -1,0 +1,77 @@
+<section class="py-5" style="background:var(--ink-800);" id="review-section">
+  <div class="container py-4">
+    <div class="row justify-content-center">
+      <div class="col-lg-7 text-center">
+        <span class="eyebrow">Share Your Experience</span>
+        <h2 class="display-serif mb-3" style="font-size:clamp(1.5rem,3vw,2.2rem);">Leave a Review</h2>
+        <div class="section-divider center"></div>
+        <p style="color:var(--stone);font-size:0.88rem;margin-bottom:24px;">Had a great experience? We'd love to hear from you.</p>
+
+        <button onclick="toggleReviewForm()" class="btn-gold" id="review-btn" style="padding:13px 36px;font-size:0.95rem;margin-bottom:0;">
+          <i class="bi bi-star me-2" id="review-btn-icon"></i>
+          <span id="review-btn-text">Leave a Review</span>
+        </button>
+
+        <div id="review-form-wrapper" style="display:none; margin-top:28px; text-align:left;">
+          <div style="background:var(--ink-700);border:1px solid rgba(201,168,76,0.15);border-radius:20px;padding:32px;">
+            <form method="post" action="{{ url_for('submit_review') }}">
+              <div class="mb-4">
+                <label style="color:var(--stone-light);font-size:0.78rem;display:block;margin-bottom:10px;">Your Rating *</label>
+                <div class="star-rating">
+                  {% for i in range(5, 0, -1) %}
+                  <input type="radio" name="rating" id="star{{ i }}" value="{{ i }}" {{ 'checked' if i == 5 else '' }}/>
+                  <label for="star{{ i }}">★</label>
+                  {% endfor %}
+                </div>
+              </div>
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label class="form-label">Your Name *</label>
+                  <input type="text" name="name" class="form-field" placeholder="e.g. Kwame Mensah" required/>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Location / Role</label>
+                  <input type="text" name="location" class="form-field" placeholder="e.g. Homebuyer, Accra"/>
+                </div>
+                <div class="col-12">
+                  <label class="form-label">Your Review *</label>
+                  <textarea name="body" class="form-field" rows="4" placeholder="Tell us about your experience…" required></textarea>
+                </div>
+                <div class="col-12 d-flex gap-3 flex-wrap">
+                  <button type="submit" class="btn-gold flex-grow-1 py-3">
+                    <i class="bi bi-send me-2"></i>Submit Review
+                  </button>
+                  <button type="button" onclick="toggleReviewForm()" class="btn-outline-gold py-3 px-4">
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+function toggleReviewForm() {
+  var wrapper = document.getElementById('review-form-wrapper');
+  var icon    = document.getElementById('review-btn-icon');
+  var text    = document.getElementById('review-btn-text');
+  var isOpen  = wrapper.style.display !== 'none';
+
+  if (isOpen) {
+    wrapper.style.display = 'none';
+    icon.className = 'bi bi-star me-2';
+    text.textContent = 'Leave a Review';
+  } else {
+    wrapper.style.display = 'block';
+    icon.className = 'bi bi-x-circle me-2';
+    text.textContent = 'Cancel';
+    setTimeout(function() {
+      wrapper.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, 50);
+  }
+}
+</script>
