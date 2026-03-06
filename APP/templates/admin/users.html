@@ -1,0 +1,64 @@
+{% extends 'admin/base.html' %}
+{% block title %}Admin Users{% endblock %}
+{% block page_title %}Admin Users{% endblock %}
+{% block content %}
+
+<div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
+  <div>
+    <h2 class="admin-page-title">Admin Users</h2>
+    <p class="admin-page-sub">Manage who has access to this admin panel</p>
+  </div>
+  <a href="{{ url_for('admin_signup') }}" class="btn-gold" style="padding:10px 22px;">
+    <i class="bi bi-person-plus me-2"></i>Add New Admin
+  </a>
+</div>
+
+<div class="admin-card p-0" style="overflow:hidden;">
+  <table style="width:100%;border-collapse:collapse;">
+    <thead>
+      <tr style="background:var(--ink-700);border-bottom:1px solid rgba(255,255,255,0.06);">
+        <th style="padding:14px 20px;color:var(--stone);font-size:0.75rem;text-transform:uppercase;letter-spacing:0.08em;font-weight:600;">Name</th>
+        <th style="padding:14px 20px;color:var(--stone);font-size:0.75rem;text-transform:uppercase;letter-spacing:0.08em;font-weight:600;">Email</th>
+        <th style="padding:14px 20px;color:var(--stone);font-size:0.75rem;text-transform:uppercase;letter-spacing:0.08em;font-weight:600;">Role</th>
+        <th style="padding:14px 20px;color:var(--stone);font-size:0.75rem;text-transform:uppercase;letter-spacing:0.08em;font-weight:600;">Joined</th>
+        <th style="padding:14px 20px;color:var(--stone);font-size:0.75rem;text-transform:uppercase;letter-spacing:0.08em;font-weight:600;">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for u in users %}
+      <tr style="border-bottom:1px solid rgba(255,255,255,0.04);">
+        <td style="padding:16px 20px;">
+          <div class="d-flex align-items-center gap-3">
+            <div class="user-dot flex-shrink-0">{{ u.full_name[0] }}</div>
+            <span style="color:var(--cream);font-weight:500;font-size:0.9rem;">{{ u.full_name }}</span>
+            {% if u.id == session.get('admin_id') %}
+            <span style="background:rgba(201,168,76,0.15);color:var(--gold);padding:2px 8px;border-radius:100px;font-size:0.68rem;font-weight:700;">YOU</span>
+            {% endif %}
+          </div>
+        </td>
+        <td style="padding:16px 20px;color:var(--stone-light);font-size:0.88rem;">{{ u.email }}</td>
+        <td style="padding:16px 20px;">
+          <span style="background:{{ 'rgba(201,168,76,0.15)' if u.role=='superadmin' else 'rgba(74,143,184,0.15)' }};color:{{ 'var(--gold)' if u.role=='superadmin' else '#4A8FB8' }};padding:3px 10px;border-radius:100px;font-size:0.72rem;font-weight:700;text-transform:uppercase;">
+            {{ u.role }}
+          </span>
+        </td>
+        <td style="padding:16px 20px;color:var(--stone);font-size:0.82rem;">{{ fmt_dt(u.created_at) }}</td>
+        <td style="padding:16px 20px;">
+          {% if u.id != session.get('admin_id') %}
+          <form method="post" action="{{ url_for('admin_user_delete', id=u.id) }}"
+                onsubmit="return confirm('Delete {{ u.full_name }}? This cannot be undone.')">
+            <button type="submit" class="btn-danger" style="padding:6px 14px;font-size:0.8rem;">
+              <i class="bi bi-trash me-1"></i>Delete
+            </button>
+          </form>
+          {% else %}
+          <span style="color:var(--stone);font-size:0.78rem;">—</span>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% endblock %}
