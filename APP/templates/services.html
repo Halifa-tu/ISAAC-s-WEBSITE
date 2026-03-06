@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% block title %}Services — LandMark Realty{% endblock %}
+{% block content %}
+
+<div class="page-header">
+  <div class="container">
+    <span class="eyebrow">What We Offer</span>
+    <h1 class="display-serif" style="font-size:clamp(2rem,4vw,3.2rem);">Our Services</h1>
+    <div class="section-divider"></div>
+  </div>
+</div>
+
+<section class="py-5" style="background:var(--ink);">
+  <div class="container py-4">
+    <div class="row g-4">
+      <div class="col-md-6">
+        <div class="service-card" style="padding:36px;height:100%;">
+          <div class="icon-circle"><i class="bi bi-house-door"></i></div>
+          <h4 style="font-family:'Cormorant Garamond',serif;color:var(--cream);font-size:1.5rem;margin-bottom:12px;">Property Sales</h4>
+          <p style="color:var(--stone);line-height:1.8;margin-bottom:18px;">Buy or sell residential and commercial properties. We handle valuations, negotiations, and documentation.</p>
+          <ul style="color:var(--stone-light);font-size:0.88rem;line-height:2.2;padding-left:20px;margin-bottom:24px;">
+            <li>Houses &amp; apartments</li><li>Commercial properties</li><li>Title deed processing</li><li>Negotiation &amp; valuation</li>
+          </ul>
+          <a href="{{ url_for('properties') }}?type=house" class="btn-outline-gold" style="font-size:0.85rem;padding:9px 22px;">Browse Houses</a>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="service-card" style="padding:36px;height:100%;">
+          <div class="icon-circle"><i class="bi bi-key"></i></div>
+          <h4 style="font-family:'Cormorant Garamond',serif;color:var(--cream);font-size:1.5rem;margin-bottom:12px;">Property Rental</h4>
+          <p style="color:var(--stone);line-height:1.8;margin-bottom:18px;">Short or long-term rentals including rooms, apartments, and houses across Ghana.</p>
+          <ul style="color:var(--stone-light);font-size:0.88rem;line-height:2.2;padding-left:20px;margin-bottom:24px;">
+            <li>Self-contained rooms</li><li>Furnished apartments</li><li>Tenancy agreements</li><li>Tenant vetting</li>
+          </ul>
+          <a href="{{ url_for('properties') }}?type=room" class="btn-outline-gold" style="font-size:0.85rem;padding:9px 22px;">Browse Rooms</a>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="service-card" style="padding:36px;height:100%;">
+          <div class="icon-circle"><i class="bi bi-geo-alt"></i></div>
+          <h4 style="font-family:'Cormorant Garamond',serif;color:var(--cream);font-size:1.5rem;margin-bottom:12px;">Land Acquisition</h4>
+          <p style="color:var(--stone);line-height:1.8;margin-bottom:18px;">Verified plots with indenture, site plans, and land search reports for residential or commercial development.</p>
+          <ul style="color:var(--stone-light);font-size:0.88rem;line-height:2.2;padding-left:20px;margin-bottom:24px;">
+            <li>Residential &amp; commercial land</li><li>Document verification</li><li>Land survey coordination</li><li>Title &amp; search reports</li>
+          </ul>
+          <a href="{{ url_for('properties') }}?type=land" class="btn-outline-gold" style="font-size:0.85rem;padding:9px 22px;">Browse Land</a>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="service-card" style="padding:36px;height:100%;border-color:rgba(201,168,76,0.25);">
+          <div class="icon-circle" style="background:rgba(201,168,76,0.18);"><i class="bi bi-search-heart"></i></div>
+          <h4 style="font-family:'Cormorant Garamond',serif;color:var(--cream);font-size:1.5rem;margin-bottom:12px;">Custom Property Search</h4>
+          <p style="color:var(--stone);line-height:1.8;margin-bottom:18px;">Can't find what you need? Submit a request and we'll actively source properties matching your exact specifications.</p>
+          <ul style="color:var(--stone-light);font-size:0.88rem;line-height:2.2;padding-left:20px;margin-bottom:24px;">
+            <li>Budget-specific sourcing</li><li>Location preferences</li><li>Off-market access</li><li>24-hour priority response</li>
+          </ul>
+          <a href="{{ url_for('property_request') }}" class="btn-gold" style="font-size:0.85rem;padding:10px 24px;">Submit a Request</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="py-5" style="background:var(--ink-800);">
+  <div class="container py-4">
+    <div class="text-center mb-5">
+      <span class="eyebrow">The Process</span>
+      <h2 class="display-serif" style="font-size:clamp(1.8rem,3.5vw,2.8rem);">How It Works</h2>
+      <div class="section-divider center"></div>
+    </div>
+    <div class="row g-4 justify-content-center">
+      {% for step in [('1','Browse or Request','Browse listings or submit a custom request with your requirements.'),('2','Contact the Agent','Call, WhatsApp, or SMS us. We respond fast to every enquiry.'),('3','Property Viewing','We arrange a site visit and walk you through every detail.'),('4','Close the Deal','We handle negotiations, documents, and handover.')] %}
+      <div class="col-md-6 col-lg-3">
+        <div class="text-center p-3">
+          <div class="step-num mx-auto mb-3">{{ step[0] }}</div>
+          <h6 style="color:var(--cream);font-family:'Cormorant Garamond',serif;font-size:1.1rem;margin-bottom:8px;">{{ step[1] }}</h6>
+          <p style="color:var(--stone);font-size:0.85rem;line-height:1.7;">{{ step[2] }}</p>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% endblock %}
