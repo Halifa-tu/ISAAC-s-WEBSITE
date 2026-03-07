@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>{% block title %}Admin{% endblock %} — LandMark Realty</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='18' fill='%230E1117'/><text y='72' x='50' text-anchor='middle' font-size='62' font-family='Georgia,serif' fill='%23C9A84C'>LR</text></svg>"/>
+  <meta name="theme-color" content="#0E1117"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}"/>
+</head>
+<body style="background:#0E1117; color:#F8F5EF; font-family:'DM Sans',sans-serif; margin:0; padding:0;">
+
+<!-- ═══ TOPBAR ═══════════════════════════════════════ -->
+<nav class="navbar navbar-dark sticky-top" style="background:#161B26; border-bottom:1px solid rgba(201,168,76,0.15); padding:0 16px; height:60px; z-index:1050;">
+  <div class="d-flex align-items-center gap-3 w-100">
+
+    <!-- Hamburger — always visible, opens offcanvas -->
+    <button class="btn p-1" type="button" data-bs-toggle="offcanvas" data-bs-target="#adminSidebar"
+      style="color:#C9A84C; font-size:1.5rem; line-height:1; background:none; border:none;">
+      <i class="bi bi-list"></i>
+    </button>
+
+    <!-- Brand -->
+    <span style="font-family:'Cormorant Garamond',serif; color:#C9A84C; font-size:1.1rem; font-weight:700;">
+      LandMark <span style="font-weight:400;">Admin</span>
+    </span>
+
+    <!-- Page title - hidden on very small screens -->
+    <span class="d-none d-sm-inline ms-2" style="color:#8A8F9C; font-size:0.82rem;">
+      / {% block page_title %}Dashboard{% endblock %}
+    </span>
+
+    <!-- Right side -->
+    <div class="ms-auto d-flex align-items-center gap-2">
+      {% set adm = get_current_admin() %}
+      {% if adm %}
+      <div style="width:34px;height:34px;border-radius:50%;background:rgba(201,168,76,0.15);border:1px solid #C9A84C;display:flex;align-items:center;justify-content:center;color:#C9A84C;font-weight:700;font-size:0.85rem;flex-shrink:0;">
+        {{ adm.full_name[0] }}
+      </div>
+      <span class="d-none d-md-inline" style="color:#BEC3CE;font-size:0.82rem;">{{ adm.full_name }}</span>
+      {% endif %}
+      <a href="{{ url_for('admin_logout') }}"
+        style="background:none;border:1px solid rgba(224,82,82,0.4);color:#E05252;border-radius:8px;padding:5px 10px;font-size:0.78rem;text-decoration:none;white-space:nowrap;">
+        <i class="bi bi-box-arrow-left"></i>
+        <span class="d-none d-sm-inline ms-1">Logout</span>
+      </a>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══ OFFCANVAS SIDEBAR ══════════════════════════════ -->
+<div class="offcanvas offcanvas-start" tabindex="-1" id="adminSidebar"
+  style="background:#161B26; border-right:1px solid rgba(201,168,76,0.15); width:270px; max-width:85vw;">
+
+  <div class="offcanvas-header" style="border-bottom:1px solid rgba(201,168,76,0.1); padding:16px 20px;">
+    <div class="d-flex align-items-center gap-3">
+      <div style="width:38px;height:38px;background:rgba(201,168,76,0.12);border:1px solid rgba(201,168,76,0.3);border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;color:#C9A84C;font-size:1rem;font-weight:700;">
+        LR
+      </div>
+      <div>
+        <div style="font-family:'Cormorant Garamond',serif;color:#C9A84C;font-size:1.05rem;font-weight:700;line-height:1.2;">LandMark Admin</div>
+        {% set adm = get_current_admin() %}
+        {% if adm %}<div style="color:#8A8F9C;font-size:0.72rem;">{{ adm.full_name }} · {{ adm.role }}</div>{% endif %}
+      </div>
+    </div>
+    <button type="button" class="btn-close btn-close-white ms-auto" data-bs-dismiss="offcanvas" style="opacity:0.5;"></button>
+  </div>
+
+  <div class="offcanvas-body p-0" style="overflow-y:auto;">
+    <nav style="padding:8px 0;">
+
+      <div style="padding:10px 20px 4px;color:#8A8F9C;font-size:0.65rem;letter-spacing:.14em;text-transform:uppercase;font-weight:600;">Main</div>
+
+      <a href="{{ url_for('admin_dashboard') }}" data-bs-dismiss="offcanvas"
+        class="d-flex align-items-center gap-3 px-4 py-3 text-decoration-none sidebar-nav-link {% if request.endpoint=='admin_dashboard' %}sidebar-nav-active{% endif %}">
+        <i class="bi bi-grid-1x2" style="font-size:1rem;min-width:20px;text-align:center;"></i>
+        <span>Overview</span>
+      </a>
+      <a href="{{ url_for('admin_listings') }}" data-bs-dismiss="offcanvas"
+        class="d-flex align-items-center gap-3 px-4 py-3 text-decoration-none sidebar-nav-link {% if 'listing' in request.endpoint %}sidebar-nav-active{% endif %}">
+        <i class="bi bi-list-ul" style="font-size:1rem;min-width:20px;text-align:center;"></i>
+        <span>Listings</span>
+      </a>
+      <a href="{{ url_for('admin_listing_new') }}" data-bs-dismiss="offcanvas"
+        class="d-flex align-items-center gap-3 px-4 py-3 text-decoration-none sidebar-nav-link {% if request.endpoint=='admin_listing_new' %}sidebar-nav-active{% endif %}">
+        <i class="bi bi-plus-circle" style="font-size:1rem;min-width:20px;text-align:center;"></i>
+        <span>Add Listing</span>
+      </a>
+
+      <div style="padding:12px 20px 4px;margin-top:4px;color:#8A8F9C;font-size:0.65rem;letter-spacing:.14em;text-transform:uppercase;font-weight:600;">Inbox</div>
+
+      <a href="{{ url_for('admin_requests') }}" data-bs-dismiss="offcanvas"
+        class="d-flex align-items-center gap-3 px-4 py-3 text-decoration-none sidebar-nav-link {% if request.endpoint=='admin_requests' %}sidebar-nav-active{% endif %}">
+        <i class="bi bi-inbox" style="font-size:1rem;min-width:20px;text-align:center;"></i>
+        <span>Property Requests</span>
+      </a>
+      <a href="{{ url_for('admin_messages') }}" data-bs-dismiss="offcanvas"
+        class="d-flex align-items-center gap-3 px-4 py-3 text-decoration-none sidebar-nav-link {% if request.endpoint=='admin_messages' %}sidebar-nav-active{% endif %}">
+        <i class="bi bi-chat-dots" style="font-size:1rem;min-width:20px;text-align:center;"></i>
+        <span>Messages</span>
+      </a>
+      <a href="{{ url_for('admin_reviews') }}" data-bs-dismiss="offcanvas"
+        class="d-flex align-items-center gap-3 px-4 py-3 text-decoration-none sidebar-nav-link {% if request.endpoint=='admin_reviews' %}sidebar-nav-active{% endif %}">
+        <i class="bi bi-star" style="font-size:1rem;min-width:20px;text-align:center;"></i>
+        <span>Reviews</span>
+      </a>
+
+      <div style="padding:12px 20px 4px;margin-top:4px;color:#8A8F9C;font-size:0.65rem;letter-spacing:.14em;text-transform:uppercase;font-weight:600;">System</div>
+
+      <a href="{{ url_for('admin_users') }}" data-bs-dismiss="offcanvas"
+        class="d-flex align-items-center gap-3 px-4 py-3 text-decoration-none sidebar-nav-link {% if request.endpoint=='admin_users' %}sidebar-nav-active{% endif %}">
+        <i class="bi bi-people" style="font-size:1rem;min-width:20px;text-align:center;"></i>
+        <span>Admin Users</span>
+      </a>
+      <a href="{{ url_for('admin_signup') }}" data-bs-dismiss="offcanvas"
+        class="d-flex align-items-center gap-3 px-4 py-3 text-decoration-none sidebar-nav-link {% if request.endpoint=='admin_signup' %}sidebar-nav-active{% endif %}">
+        <i class="bi bi-person-plus" style="font-size:1rem;min-width:20px;text-align:center;"></i>
+        <span>Add Admin</span>
+      </a>
+      <a href="{{ url_for('admin_settings') }}" data-bs-dismiss="offcanvas"
+        class="d-flex align-items-center gap-3 px-4 py-3 text-decoration-none sidebar-nav-link {% if request.endpoint=='admin_settings' %}sidebar-nav-active{% endif %}">
+        <i class="bi bi-gear" style="font-size:1rem;min-width:20px;text-align:center;"></i>
+        <span>Settings</span>
+      </a>
+      <a href="{{ url_for('index') }}" target="_blank"
+        class="d-flex align-items-center gap-3 px-4 py-3 text-decoration-none sidebar-nav-link">
+        <i class="bi bi-box-arrow-up-right" style="font-size:1rem;min-width:20px;text-align:center;"></i>
+        <span>View Website</span>
+      </a>
+
+      <div style="border-top:1px solid rgba(255,255,255,0.07);margin-top:8px;padding-top:4px;">
+        <a href="{{ url_for('admin_logout') }}"
+          class="d-flex align-items-center gap-3 px-4 py-3 text-decoration-none"
+          style="color:#E05252;">
+          <i class="bi bi-box-arrow-left" style="font-size:1rem;min-width:20px;text-align:center;"></i>
+          <span>Logout</span>
+        </a>
+      </div>
+    </nav>
+  </div>
+</div>
+
+<!-- ═══ FLASH MESSAGES ═══════════════════════════════ -->
+{% with messages = get_flashed_messages() %}
+{% if messages %}{% for msg in messages %}
+  {% set parts = msg.split(':',1) %}
+  {% set mtype = parts[0] %}
+  {% set mtext = parts[1] if parts|length > 1 else msg %}
+  <div class="d-flex align-items-center justify-content-between px-4 py-3"
+    style="background:{{ 'rgba(37,211,102,0.1)' if mtype=='success' else 'rgba(224,82,82,0.1)' }};
+           border-bottom:1px solid {{ 'rgba(37,211,102,0.2)' if mtype=='success' else 'rgba(224,82,82,0.2)' }};
+           color:{{ '#25D366' if mtype=='success' else '#E05252' }};
+           font-size:0.88rem;" id="flash-{{ loop.index }}">
+    <span><i class="bi bi-{{ 'check-circle' if mtype=='success' else 'exclamation-circle' }} me-2"></i>{{ mtext }}</span>
+    <button onclick="document.getElementById('flash-{{ loop.index }}').remove()"
+      style="background:none;border:none;color:inherit;font-size:1.1rem;cursor:pointer;opacity:.7;">×</button>
+  </div>
+{% endfor %}{% endif %}
+{% endwith %}
+
+<!-- ═══ PAGE CONTENT ══════════════════════════════════ -->
+<main style="padding:24px 20px; max-width:1200px; margin:0 auto;">
+  {% block content %}{% endblock %}
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// Auto-dismiss flash messages after 5s
+setTimeout(function() {
+  document.querySelectorAll('[id^="flash-"]').forEach(function(el) {
+    el.style.transition = 'opacity .5s';
+    el.style.opacity = '0';
+    setTimeout(function() { el.remove(); }, 500);
+  });
+}, 5000);
+</script>
+
+<style>
+.sidebar-nav-link { color: #BEC3CE; font-size: 0.9rem; font-weight: 500; transition: all .18s; border-left: 3px solid transparent; }
+.sidebar-nav-link:hover { color: #C9A84C; background: rgba(201,168,76,0.07); }
+.sidebar-nav-active { color: #C9A84C !important; background: rgba(201,168,76,0.09); border-left-color: #C9A84C; }
+@media (max-width: 575px) {
+  main { padding: 16px 12px; }
+}
+</style>
+
+{% block scripts %}{% endblock %}
+</body>
+</html>
