@@ -53,7 +53,7 @@ def _sql(query, params=None):
         headers = {
             "Content-Type":           "application/json",
             "Authorization":          f"Basic {cred}",
-            "Neon-Connection-String": DB_URL,
+            "Neon-Connection-String": f"postgresql://{user}:{password}@{host}/{parsed.path.lstrip('/')}?sslmode=require",
         },
         method = "POST"
     )
@@ -128,7 +128,26 @@ def init_db():
         db_run("INSERT INTO admin_users(full_name,email,password,role) VALUES(%s,%s,%s,%s)",
                ('Isaac Teye','iisaacteye@gmail.com',generate_password_hash('agent2024'),'superadmin'))
 
-    # No pre-saved listings or reviews — admin adds all content via the dashboard
+    if db_val("SELECT COUNT(*) FROM listings") == 0:
+        for s in [
+            ('house','Elegant 4-Bedroom Family Home','Spacious modern home with open-plan living, fitted kitchen, master en-suite, and a large garden.','GHS 850,000','East Legon, Accra','4','3','320 sqm',None,None,'available','1'),
+            ('room','Self-Contained Studio Room','Neat tiled self-contained room with private bath, kitchenette, and 24/7 water and electricity.','GHS 1,200/mo','Tema, Community 25','1','1','45 sqm',None,None,'available','0'),
+            ('land','Prime Residential Plot','Fenced, gated 1-acre plot with Indenture, Site Plan, and Land Search Report.','GHS 400,000','Kasoa, Central Region',None,None,'1 acre','Residential','Indenture, Site Plan','available','1'),
+            ('house','Modern 3-Bedroom Townhouse','Newly built townhouse with solar panels, CCTV security, covered parking.','GHS 620,000','Tema, Community 18','3','2','220 sqm',None,None,'available','0'),
+            ('room','Furnished 2-Bedroom Apartment','Fully furnished apartment with AC, washing machine, DSTV, and WiFi.','GHS 4,500/mo','Airport Residential, Accra','2','2','90 sqm',None,None,'available','1'),
+            ('land','Commercial Land — Main Road','Half-acre commercial land on a busy road.','GHS 750,000','Spintex Road, Accra',None,None,'0.5 acre','Commercial','Indenture','available','0'),
+        ]:
+            db_run("""INSERT INTO listings(type,title,description,price,location,bedrooms,
+                bathrooms,size,land_use,land_docs,status,featured)
+                VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""", s)
+
+    if db_val("SELECT COUNT(*) FROM reviews") == 0:
+        for r in [
+            ('Kwame Acheampong','Homebuyer, Accra','5','Found my dream home in East Legon within 2 weeks. Professional, responsive, and genuinely helpful.'),
+            ('Abena Boateng','Business Owner, Kumasi','5','Submitted a request and had 3 perfect options within days. Exceptional service!'),
+            ('Emmanuel Owusu','Investor, Tema','5','Bought a plot in Kasoa with all documents intact. Fast, transparent, and stress-free.'),
+        ]:
+            db_run("INSERT INTO reviews(name,location,rating,body,approved) VALUES(%s,%s,%s,%s,'1')", r)
 
     _ready = True
 
