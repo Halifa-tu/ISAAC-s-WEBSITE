@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% block title %}Properties — LandMark Realty{% endblock %}
+{% block content %}
+
+<div class="page-header">
+  <div class="container">
+    <span class="eyebrow">Browse</span>
+    <h1 class="display-serif" style="font-size:clamp(2rem,4vw,3.2rem);">All Properties</h1>
+    <div class="section-divider"></div>
+    <p style="color:var(--stone);max-width:540px;font-size:0.93rem;line-height:1.8;">
+      Explore our full range of verified properties. Filter by type, budget, or location.
+    </p>
+  </div>
+</div>
+
+<div class="container py-5">
+  <!-- Filters -->
+  <form method="get" action="{{ url_for('properties') }}">
+    <div class="row g-3 mb-4 align-items-end">
+      <div class="col-md-3">
+        <label class="form-label">Property Type</label>
+        <select name="type" class="form-field" onchange="this.form.submit()">
+          <option value="" {% if not filters.type %}selected{% endif %}>All Types</option>
+          <option value="house" {% if filters.type=='house' %}selected{% endif %}>Houses</option>
+          <option value="room"  {% if filters.type=='room'  %}selected{% endif %}>Rooms</option>
+          <option value="land"  {% if filters.type=='land'  %}selected{% endif %}>Land</option>
+        </select>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Budget</label>
+        <select name="budget" class="form-field" onchange="this.form.submit()">
+          <option value="" {% if not filters.budget %}selected{% endif %}>Any Budget</option>
+          <option value="low"  {% if filters.budget=='low'  %}selected{% endif %}>Under GHS 200K</option>
+          <option value="mid"  {% if filters.budget=='mid'  %}selected{% endif %}>GHS 200K – 600K</option>
+          <option value="high" {% if filters.budget=='high' %}selected{% endif %}>Above GHS 600K</option>
+        </select>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Location</label>
+        <input name="loc" type="text" class="form-field" placeholder="e.g. Accra, Tema…" value="{{ filters.loc }}"/>
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Sort</label>
+        <select name="sort" class="form-field" onchange="this.form.submit()">
+          <option value="newest"   {% if filters.sort=='newest'   %}selected{% endif %}>Newest</option>
+          <option value="featured" {% if filters.sort=='featured' %}selected{% endif %}>Featured First</option>
+        </select>
+      </div>
+      <div class="col-md-1">
+        <button type="submit" class="btn-gold w-100" style="padding:11px 8px;">Go</button>
+      </div>
+    </div>
+  </form>
+
+  <!-- Type chips -->
+  <div class="d-flex gap-2 mb-4 flex-wrap">
+    <a href="{{ url_for('properties') }}" class="chip {% if not filters.type %}active{% endif %}">All</a>
+    <a href="{{ url_for('properties') }}?type=house" class="chip {% if filters.type=='house' %}active{% endif %}">🏠 Houses</a>
+    <a href="{{ url_for('properties') }}?type=room"  class="chip {% if filters.type=='room'  %}active{% endif %}">🛏 Rooms</a>
+    <a href="{{ url_for('properties') }}?type=land"  class="chip {% if filters.type=='land'  %}active{% endif %}">🌿 Land</a>
+  </div>
+
+  <div style="color:var(--stone);font-size:0.83rem;margin-bottom:20px;">
+    Showing {{ listings|length }} propert{{ 'y' if listings|length == 1 else 'ies' }}
+  </div>
+
+  {% if listings %}
+  <div class="row g-4">
+    {% for l in listings %}{% include '_property_card.html' %}{% endfor %}
+  </div>
+  {% else %}
+  <div class="text-center py-5">
+    <div style="font-size:4rem;margin-bottom:16px;opacity:0.4;">🔍</div>
+    <p style="color:var(--stone);font-size:1rem;">
+      No properties match your search.<br>
+      <a href="{{ url_for('property_request') }}" style="color:var(--gold);">Submit a custom property request →</a>
+    </p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
