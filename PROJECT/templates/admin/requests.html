@@ -1,0 +1,105 @@
+{% extends 'admin/base.html' %}
+{% block title %}Property Requests{% endblock %}
+{% block page_title %}Property Requests{% endblock %}
+{% block content %}
+
+<div class="d-flex align-items-center justify-content-between mb-4">
+  <div>
+    <h2 class="admin-page-title">Property Requests</h2>
+    <p class="admin-page-sub">{{ requests|length }} request{{ 's' if requests|length != 1 else '' }} received</p>
+  </div>
+</div>
+
+{% if requests %}
+<div class="d-flex flex-column gap-3">
+  {% for r in requests %}
+  <div class="admin-card">
+    <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-3">
+      <div class="d-flex align-items-center gap-3">
+        <div class="user-dot flex-shrink-0">{{ r.name[0] }}</div>
+        <div>
+          <div style="color:var(--cream);font-weight:600;font-size:0.95rem;">{{ r.name }}</div>
+          <div style="color:var(--stone);font-size:0.78rem;">{{ fmt_dt(r.created_at) }}</div>
+        </div>
+        {% if r.type %}
+        <span style="background:{{ 'rgba(201,168,76,0.12)' if r.type=='Land / Plot' else 'rgba(74,143,184,0.12)' }};color:{{ 'var(--gold)' if r.type=='Land / Plot' else '#4A8FB8' }};padding:3px 10px;border-radius:100px;font-size:0.72rem;font-weight:700;">
+          {{ r.type }}
+        </span>
+        {% endif %}
+        {% if r.urgency and r.urgency == 'As soon as possible' %}
+        <span style="background:rgba(224,82,82,0.12);color:#E05252;padding:3px 10px;border-radius:100px;font-size:0.7rem;font-weight:700;">URGENT</span>
+        {% endif %}
+      </div>
+      <form method="post" action="{{ url_for('admin_request_delete', id=r.id) }}"
+            onsubmit="return confirm('Delete this request?')">
+        <button type="submit" class="btn-danger" style="padding:6px 14px;font-size:0.8rem;">
+          <i class="bi bi-trash me-1"></i>Delete
+        </button>
+      </form>
+    </div>
+
+    <!-- Contact info -->
+    <div class="row g-2 mb-3">
+      <div class="col-auto"><div class="detail-pill"><i class="bi bi-telephone me-2" style="color:var(--gold);"></i>{{ r.phone }}</div></div>
+      {% if r.email %}<div class="col-auto"><div class="detail-pill"><i class="bi bi-envelope me-2" style="color:var(--gold);"></i>{{ r.email }}</div></div>{% endif %}
+      {% if r.urgency %}<div class="col-auto"><div class="detail-pill"><i class="bi bi-clock me-2" style="color:var(--gold);"></i>{{ r.urgency }}</div></div>{% endif %}
+    </div>
+
+    <!-- Property details -->
+    <div class="row g-2 mb-3">
+      {% if r.location %}<div class="col-auto"><div class="detail-pill"><i class="bi bi-geo-alt me-1" style="color:var(--gold);"></i>{{ r.location }}</div></div>{% endif %}
+      {% if r.budget %}<div class="col-auto"><div class="detail-pill"><i class="bi bi-cash me-1" style="color:var(--gold);"></i>{{ r.budget }}</div></div>{% endif %}
+      {% if r.purpose %}<div class="col-auto"><div class="detail-pill"><i class="bi bi-house me-1" style="color:var(--gold);"></i>{{ r.purpose }}</div></div>{% endif %}
+      {% if r.bedrooms %}<div class="col-auto"><div class="detail-pill"><i class="bi bi-door-open me-1" style="color:var(--gold);"></i>{{ r.bedrooms }}</div></div>{% endif %}
+
+      {# Land-specific fields #}
+      {% if r.land_size %}<div class="col-auto"><div class="detail-pill"><i class="bi bi-arrows-angle-expand me-1" style="color:var(--gold);"></i>{{ r.land_size }}</div></div>{% endif %}
+      {% if r.land_use %}<div class="col-auto"><div class="detail-pill"><i class="bi bi-building me-1" style="color:var(--gold);"></i>{{ r.land_use }}</div></div>{% endif %}
+      {% if r.land_docs %}<div class="col-auto"><div class="detail-pill"><i class="bi bi-file-earmark-text me-1" style="color:var(--gold);"></i>{{ r.land_docs }}</div></div>{% endif %}
+    </div>
+
+    {% if r.details %}
+    <div style="background:var(--ink-700);border-radius:10px;padding:14px;margin-bottom:14px;">
+      <div style="color:var(--stone);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;">Additional Details</div>
+      <p style="color:var(--stone-light);font-size:0.88rem;line-height:1.7;margin:0;">{{ r.details }}</p>
+    </div>
+    {% endif %}
+
+    <!-- Reply section -->
+    {% if r.admin_reply %}
+    <div style="background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.2);border-radius:10px;padding:14px;margin-bottom:12px;">
+      <div style="color:var(--gold);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;">
+        <i class="bi bi-reply me-1"></i>Your Reply Note
+      </div>
+      <p style="color:var(--cream);font-size:0.88rem;line-height:1.75;margin:0;">{{ r.admin_reply }}</p>
+    </div>
+    {% endif %}
+
+    <form method="post" action="{{ url_for('admin_request_reply', id=r.id) }}">
+      <textarea name="reply" class="form-field" rows="2"
+        placeholder="Write a note or reply to share with this customer…"
+        style="margin-bottom:10px;">{{ r.admin_reply or '' }}</textarea>
+      <div class="d-flex gap-2 flex-wrap align-items-center">
+        <button type="submit" class="btn-gold" style="padding:9px 20px;font-size:0.85rem;">
+          <i class="bi bi-save me-1"></i>Save Note
+        </button>
+        <a href="tel:{{ r.phone }}" class="btn-outline-gold" style="padding:8px 18px;font-size:0.82rem;">
+          <i class="bi bi-telephone me-1"></i>Call
+        </a>
+        <a href="https://wa.me/{{ r.phone|replace(' ','')|replace('+','') }}" target="_blank" class="btn-wa" style="padding:9px 18px;font-size:0.82rem;">
+          <i class="bi bi-whatsapp me-1"></i>WhatsApp
+        </a>
+      </div>
+    </form>
+
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+  <i class="bi bi-inbox" style="font-size:3rem;color:var(--stone);opacity:0.4;"></i>
+  <p style="color:var(--stone);margin-top:16px;">No property requests yet.</p>
+</div>
+{% endif %}
+
+{% endblock %}
