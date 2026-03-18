@@ -1,0 +1,44 @@
+{% extends 'admin/base.html' %}
+{% block title %}Listings{% endblock %}
+{% block page_title %}All Listings{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+  <h2 class="page-heading mb-0">All Listings</h2>
+  <a href="{{ url_for('admin_listing_new') }}" class="btn-g"><i class="bi bi-plus me-1"></i>Add New</a>
+</div>
+
+{% if listings %}
+  {% for l in listings %}
+  <div class="data-row">
+    <div class="data-thumb">
+      {% if l.images %}
+        <img src="{{ url_for('serve_image', img_id=l.images[0].id) }}" alt=""/>
+      {% else %}
+        {{ {'house':'🏠','room':'🛏️','land':'🌿'}[l.type] or '🏠' }}
+      {% endif %}
+    </div>
+    <div class="data-info">
+      <div class="d-flex gap-2 flex-wrap mb-1">
+        <span class="type-pill type-{{ l.type }}">{{ l.type }}</span>
+        {% if l.featured %}<span class="feat-pill">★ Featured</span>{% endif %}
+        {% if l.status == 'let' %}<span class="let-pill">Sold/Let</span>{% endif %}
+      </div>
+      <div class="data-title">{{ l.title }}</div>
+      <div class="data-meta">{{ l.location }} · {{ l.price }} · {{ l.images|length }} photo{{ 's' if l.images|length != 1 }}</div>
+    </div>
+    <div class="data-actions">
+      <a href="{{ url_for('admin_listing_edit', id=l.id) }}" class="btn-dark-sm"><i class="bi bi-pencil me-1"></i>Edit</a>
+      <form method="post" action="{{ url_for('admin_listing_delete', id=l.id) }}" onsubmit="return confirm('Delete this listing?');" style="display:inline;">
+        <button type="submit" class="btn-danger-sm"><i class="bi bi-trash me-1"></i>Delete</button>
+      </form>
+    </div>
+  </div>
+  {% endfor %}
+{% else %}
+  <div class="empty-state">
+    <div style="font-size:3rem;margin-bottom:12px;opacity:0.3;">🏠</div>
+    <p>No listings yet. <a href="{{ url_for('admin_listing_new') }}" style="color:var(--gold);">Add your first listing →</a></p>
+  </div>
+{% endif %}
+{% endblock %}
